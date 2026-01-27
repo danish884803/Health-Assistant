@@ -20,19 +20,6 @@ export async function POST(req) {
     const user = verifyToken(token);
     const body = await req.json();
 
-    // const appointment = await Appointment.create({
-    //   userId: new mongoose.Types.ObjectId(user.id),
-
-    //   doctorId: new mongoose.Types.ObjectId(body.doctorId), // ✅ FIX
-    //   doctorName: body.doctorName,
-    //   department: body.department,
-    //   clinic: body.clinic,
-    //   room: body.room,
-
-    //   date: new Date(body.date),
-    //   time: body.time,
-    //   status: "booked",
-    // });
 const appointment = await Appointment.create({
   userId: new mongoose.Types.ObjectId(user.id),
 

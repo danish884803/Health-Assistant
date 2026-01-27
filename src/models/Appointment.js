@@ -4,7 +4,7 @@ const AppointmentSchema = new mongoose.Schema({
   userId: mongoose.Schema.Types.ObjectId,
 
   // ✅ ADD
-  patientName: String,
+  
   patientId: String,
 
   doctorId: {

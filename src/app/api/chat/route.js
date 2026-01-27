@@ -1,33 +1,3 @@
-// import { NextResponse } from 'next/server';
-// import openai, { SYSTEM_PROMPT } from '@/lib/openai';
-
-// export async function POST(req) {
-//     try {
-//         const { messages } = await req.json();
-
-//         if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('...')) {
-//             // Fallback for demo without real key
-//             const lastUserMessage = messages[messages.length - 1].content;
-//             return NextResponse.json({
-//                 role: 'assistant',
-//                 content: `[DEMO MODE] You asked: "${lastUserMessage}". This is a simulated response because the OpenAI API key is not configured. Sheikh Khalifa Hospital – Fujairah welcomes you!`
-//             });
-//         }
-
-//         const response = await openai.chat.completions.create({
-//             model: 'gpt-4o-mini',
-//             messages: [
-//                 { role: 'system', content: SYSTEM_PROMPT },
-//                 ...messages,
-//             ],
-//         });
-
-//         return NextResponse.json(response.choices[0].message);
-//     } catch (error) {
-//         console.error('Chat API Error:', error);
-//         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-//     }
-// }
 import { NextResponse } from "next/server";
 import openai from "@/lib/openai";
 import { connectDB } from "@/lib/mongodb";
