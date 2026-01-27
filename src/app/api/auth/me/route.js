@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/jwt";
@@ -15,10 +16,14 @@ export async function GET() {
 
     return NextResponse.json({
       user: {
-        id: decoded.id,        // ✅ REQUIRED
-        name: decoded.name,    // ✅ REQUIRED
+        id: decoded.id,
         email: decoded.email,
         role: decoded.role,
+
+        // ✅ ROLE-SPECIFIC FIELDS
+        name: decoded.name || null,          // doctor
+        fullName: decoded.fullName || null,  // patient
+        patientId: decoded.patientId || null,
       },
     });
   } catch (err) {

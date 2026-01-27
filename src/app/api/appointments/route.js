@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Appointment from "@/models/Appointment";
@@ -6,6 +7,9 @@ import { verifyToken } from "@/lib/jwt";
 import { sendAppointmentEmail } from "@/lib/mailer";
 import mongoose from "mongoose";
 
+/* =========================
+   CREATE APPOINTMENT
+========================= */
 export async function POST(req) {
   try {
     await connectDB();
@@ -20,25 +24,25 @@ export async function POST(req) {
     const user = verifyToken(token);
     const body = await req.json();
 
-const appointment = await Appointment.create({
-  userId: new mongoose.Types.ObjectId(user.id),
+    const appointment = await Appointment.create({
+      userId: new mongoose.Types.ObjectId(user.id),
 
-  // ✅ ADD THESE TWO
-  patientName: user.name || "Patient",
-  patientId: user.id,
+      // ✅ CORRECT
+      patientId: user.patientId,     // PAT-XXXX
+      patientName: user.fullName,    // Full name
 
-  doctorId: new mongoose.Types.ObjectId(body.doctorId),
-  doctorName: body.doctorName,
-  department: body.department,
-  clinic: body.clinic,
-  room: body.room,
+      doctorId: new mongoose.Types.ObjectId(body.doctorId),
+      doctorName: body.doctorName,
+      department: body.department,
+      clinic: body.clinic,
+      room: body.room,
 
-  date: new Date(body.date),
-  time: body.time,
-  status: "booked",
-});
+      date: new Date(body.date),
+      time: body.time,
+      status: "booked",
+    });
 
-
+    // 📧 Email (safe)
     try {
       await sendAppointmentEmail({
         to: user.email,
@@ -59,7 +63,9 @@ const appointment = await Appointment.create({
   }
 }
 
-
+/* =========================
+   GET PATIENT APPOINTMENTS
+========================= */
 export async function GET() {
   try {
     await connectDB();
@@ -71,13 +77,10 @@ export async function GET() {
       return NextResponse.json({ appointments: [] });
     }
 
-    const decoded = verifyToken(token);
-
-    // 🔥 CRITICAL FIX: cast user id properly
-    const userObjectId = new mongoose.Types.ObjectId(decoded.id);
+    const user = verifyToken(token);
 
     const appointments = await Appointment.find({
-      userId: userObjectId,
+      userId: new mongoose.Types.ObjectId(user.id),
     }).sort({ date: 1 });
 
     return NextResponse.json({ appointments });

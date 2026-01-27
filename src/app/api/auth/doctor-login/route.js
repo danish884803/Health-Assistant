@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/mongodb";
@@ -11,23 +12,23 @@ export async function POST(req) {
 
     const doctor = await Doctor.findOne({ email });
     if (!doctor) {
-      return NextResponse.json({ error: "Doctor not found" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Doctor not found" },
+        { status: 401 }
+      );
     }
 
     const ok = await bcrypt.compare(password, doctor.passwordHash);
     if (!ok) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
-    // 🔐 MFA placeholder (phase 2)
-    // if (doctor.mfaEnabled) send OTP here
-
-   const token = signJwt({
-  id: doctor._id.toString(), // ✅ STRING
-  role: "doctor",
-  email: doctor.email,
-  name: doctor.name,
-});
+    // ✅ ROLE IS REQUIRED
+  doctor.role = "doctor";
+const token = signJwt(doctor);
 
 
     const res = NextResponse.json({ success: true });
@@ -37,10 +38,15 @@ export async function POST(req) {
       sameSite: "lax",
       secure: false,
       path: "/",
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return res;
-  } catch (e) {
-    return NextResponse.json({ error: "Login failed" }, { status: 500 });
+  } catch (err) {
+    console.error("DOCTOR LOGIN ERROR:", err);
+    return NextResponse.json(
+      { error: "Doctor login failed" },
+      { status: 500 }
+    );
   }
 }

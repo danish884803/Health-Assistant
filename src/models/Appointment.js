@@ -1,15 +1,29 @@
+// src/models/Appointment.js
 import mongoose from "mongoose";
 
 const AppointmentSchema = new mongoose.Schema({
-  userId: mongoose.Schema.Types.ObjectId,
+  // Patient
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 
-  // ✅ ADD
-  
-  patientId: String,
+  patientId: {
+    type: String, // PAT-2026-XXXX
+    required: true,
+  },
 
+  patientName: {
+    type: String,
+    required: true,
+  },
+
+  // Doctor
   doctorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Doctor",
+    required: true,
   },
 
   doctorName: String,
@@ -17,15 +31,22 @@ const AppointmentSchema = new mongoose.Schema({
   clinic: String,
   room: String,
 
-  date: Date,
-  time: String,
+  date: {
+    type: Date,
+    required: true,
+  },
+
+  time: {
+    type: String,
+    required: true,
+  },
 
   status: {
     type: String,
     enum: ["booked", "rescheduled", "cancelled"],
     default: "booked",
   },
-});
+}, { timestamps: true });
 
 export default mongoose.models.Appointment ||
   mongoose.model("Appointment", AppointmentSchema);

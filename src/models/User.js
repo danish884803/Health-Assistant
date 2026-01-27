@@ -1,3 +1,4 @@
+// src/models/User.js
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
@@ -24,14 +25,15 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
 
+    // ✅ Hospital Patient ID (PAT-XXXX)
     patientId: {
       type: String,
       unique: true,
       required: true,
     },
 
-    phone: String,       // collected only
-    emiratesId: String, // collected only
+    phone: String,
+    emiratesId: String,
     dob: Date,
 
     emailVerified: {
@@ -45,4 +47,5 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+export default mongoose.models.User ||
+  mongoose.model("User", UserSchema);

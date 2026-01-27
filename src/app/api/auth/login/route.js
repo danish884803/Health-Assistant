@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/mongodb";
@@ -15,15 +16,21 @@ export async function POST(req) {
     }
 
     if (!user.emailVerified) {
-      return NextResponse.json({ error: "Email not verified" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Email not verified" },
+        { status: 403 }
+      );
     }
 
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
-    // ✅ SIGN JWT
+    // ✅ JWT NOW CONTAINS patientId
     const token = signJwt(user);
 
     const res = NextResponse.json({
@@ -31,11 +38,10 @@ export async function POST(req) {
       role: user.role,
     });
 
-    // 🔴 CRITICAL PART
     res.cookies.set("token", token, {
       httpOnly: true,
       sameSite: "lax",
-      secure: false,          // ✅ MUST be false on localhost
+      secure: false, // localhost
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
