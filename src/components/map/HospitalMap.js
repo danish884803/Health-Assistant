@@ -1,0 +1,217 @@
+'use client';
+
+import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import {
+  DoorOpen,
+  Heart,
+  Stethoscope,
+  Building2,
+  Coffee,
+  Car,
+  Brain,
+  Bone,
+  Baby,
+  Users,
+  Sparkles,
+} from "lucide-react";
+
+/* ---------------- FLOORS DATA ---------------- */
+
+const floors = [
+  {
+    id: 0,
+    name: "Ground Floor",
+    rooms: [
+      { id: "reception", name: "Main Reception", type: "service", icon: DoorOpen, gridArea: "1 / 1 / 2 / 3" },
+      { id: "emergency", name: "Emergency", type: "department", icon: Heart, gridArea: "1 / 3 / 2 / 5" },
+      { id: "pharmacy", name: "Pharmacy", type: "service", icon: Stethoscope, gridArea: "2 / 1 / 3 / 2" },
+      { id: "laboratory", name: "Laboratory", type: "service", icon: Building2, gridArea: "2 / 2 / 3 / 3" },
+      { id: "cafeteria", name: "Cafeteria", type: "facility", icon: Coffee, gridArea: "2 / 3 / 3 / 4" },
+      { id: "parking", name: "Parking", type: "facility", icon: Car, gridArea: "2 / 4 / 3 / 5" },
+    ],
+  },
+  {
+    id: 1,
+    name: "First Floor",
+    rooms: [
+      { id: "cardiology", name: "Cardiology", type: "department", icon: Heart, gridArea: "1 / 1 / 2 / 3" },
+      { id: "neurology", name: "Neurology", type: "department", icon: Brain, gridArea: "1 / 3 / 2 / 5" },
+      { id: "orthopedics", name: "Orthopedics", type: "department", icon: Bone, gridArea: "2 / 1 / 3 / 3" },
+      { id: "radiology", name: "Radiology", type: "service", icon: Building2, gridArea: "2 / 3 / 3 / 5" },
+    ],
+  },
+  {
+    id: 2,
+    name: "Second Floor",
+    rooms: [
+      { id: "pediatrics", name: "Pediatrics", type: "department", icon: Baby, gridArea: "1 / 1 / 2 / 3" },
+      { id: "gynecology", name: "Gynecology", type: "department", icon: Users, gridArea: "1 / 3 / 2 / 5" },
+      { id: "dermatology", name: "Dermatology", type: "department", icon: Sparkles, gridArea: "2 / 1 / 3 / 3" },
+      { id: "dental", name: "Dental Clinic", type: "department", icon: Stethoscope, gridArea: "2 / 3 / 3 / 5" },
+    ],
+  },
+];
+
+/* ---------------- COMPONENT ---------------- */
+
+export default function HospitalMap() {
+  const [selectedFloor, setSelectedFloor] = useState(0);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // 🔥 Detect where user came from
+  const from = searchParams.get("from");
+
+  const backPath = from === "dashboard" ? "/dashboard/patient" : "/";
+  const backLabel = from === "dashboard" ? "← Back to Dashboard" : "← Back to Home";
+
+  const currentFloor = floors[selectedFloor];
+  const activeRoom = currentFloor.rooms.find(r => r.id === selectedRoom);
+
+  const getRoomStyle = (type, active) => {
+    if (active)
+      return "bg-teal-600 text-white shadow-[0_12px_32px_rgba(16,185,129,0.35)]";
+
+    switch (type) {
+      case "department":
+        return "bg-teal-50 text-teal-700 hover:bg-teal-100";
+      case "service":
+        return "bg-sky-50 text-sky-700 hover:bg-sky-100";
+      case "facility":
+        return "bg-amber-50 text-amber-700 hover:bg-amber-100";
+      default:
+        return "bg-gray-100";
+    }
+  };
+
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-20">
+      
+      {/* HEADER */}
+      <div className="mb-8">
+        <button
+          onClick={() => router.push(backPath)}
+          className="text-sm text-gray-500 hover:text-gray-800"
+        >
+          {backLabel}
+        </button>
+
+        <h1 className="text-3xl font-bold text-gray-900 mt-2">
+          Hospital Map
+        </h1>
+
+        <p className="text-gray-500">
+          Navigate through our hospital facilities
+        </p>
+      </div>
+
+      {/* FLOOR TABS */}
+      <div className="flex gap-3 mb-8">
+        {floors.map(floor => (
+          <button
+            key={floor.id}
+            onClick={() => {
+              setSelectedFloor(floor.id);
+              setSelectedRoom(null);
+            }}
+            className={`px-6 py-2 rounded-full text-sm font-medium transition
+              ${selectedFloor === floor.id
+                ? "bg-teal-600 text-white shadow"
+                : "border border-teal-500 text-teal-600 hover:bg-teal-50"}`}
+          >
+            {floor.name}
+          </button>
+        ))}
+      </div>
+
+      {/* LAYOUT */}
+      <div className="grid lg:grid-cols-[1fr_320px] gap-10">
+        
+        {/* MAP */}
+        <div className="bg-white rounded-3xl border shadow-sm p-6">
+          <h2 className="font-semibold text-lg mb-4">
+            {currentFloor.name}
+          </h2>
+
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gridTemplateRows: "repeat(2, 120px)",
+            }}
+          >
+            {currentFloor.rooms.map(room => {
+              const Icon = room.icon;
+              const active = selectedRoom === room.id;
+
+              return (
+                <button
+                  key={room.id}
+                  onClick={() => setSelectedRoom(room.id)}
+                  style={{ gridArea: room.gridArea }}
+                  className={`rounded-2xl flex flex-col items-center justify-center gap-2 transition-all duration-200 ${getRoomStyle(room.type, active)}`}
+                >
+                  <Icon className="w-8 h-8" />
+                  <span className="text-sm font-medium text-center">
+                    {room.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* LEGEND */}
+          <div className="mt-6 flex gap-6 text-sm text-gray-500">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded bg-teal-200" /> Departments
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded bg-sky-200" /> Services
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded bg-amber-200" /> Facilities
+            </div>
+          </div>
+        </div>
+
+        {/* ROOM DETAILS */}
+        <div className="bg-white rounded-3xl border shadow-sm p-6">
+          <h2 className="font-semibold text-lg mb-4">Room Details</h2>
+
+          {activeRoom ? (
+            <>
+              <div className="w-16 h-16 rounded-2xl bg-teal-50 flex items-center justify-center mb-4">
+                <activeRoom.icon className="w-8 h-8 text-teal-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold">
+                {activeRoom.name}
+              </h3>
+
+              <p className="text-sm text-gray-500 mt-1">
+                {currentFloor.name} • Room {activeRoom.id.toUpperCase()}
+              </p>
+
+              <p className="mt-3 text-sm">
+                <span className="text-gray-500">Type:</span>{" "}
+                <span className="capitalize">{activeRoom.type}</span>
+              </p>
+
+              <p className="text-sm mt-1">
+                <span className="text-gray-500">Status:</span>{" "}
+                <span className="text-emerald-600 font-medium">Open</span>
+              </p>
+            </>
+          ) : (
+            <p className="text-gray-500 text-sm">
+              Select a room on the map to view details
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
