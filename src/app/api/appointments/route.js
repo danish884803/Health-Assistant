@@ -24,23 +24,42 @@ export async function POST(req) {
     const user = verifyToken(token);
     const body = await req.json();
 
+    // const appointment = await Appointment.create({
+    //   userId: new mongoose.Types.ObjectId(user.id),
+
+    //   // ✅ CORRECT
+    //   patientId: user.patientId,     // PAT-XXXX
+    //   patientName: user.fullName,    // Full name
+
+    //   doctorId: new mongoose.Types.ObjectId(body.doctorId),
+    //   doctorName: body.doctorName,
+    //   department: body.department,
+    //   clinic: body.clinic,
+    //   room: body.room,
+
+    //   date: new Date(body.date),
+    //   time: body.time,
+    //   status: "booked",
+    // });
     const appointment = await Appointment.create({
-      userId: new mongoose.Types.ObjectId(user.id),
+  userId: new mongoose.Types.ObjectId(user.id),
 
-      // ✅ CORRECT
-      patientId: user.patientId,     // PAT-XXXX
-      patientName: user.fullName,    // Full name
+  // ✅ PATIENT DATA (FIX)
+  patientId: user.patientId,          // hospital patient ID
+  patientName: user.fullName,          // display name
+  patientEmail: user.email,            // 🔥 REQUIRED FOR EMAILS
 
-      doctorId: new mongoose.Types.ObjectId(body.doctorId),
-      doctorName: body.doctorName,
-      department: body.department,
-      clinic: body.clinic,
-      room: body.room,
+  // Doctor
+  doctorId: new mongoose.Types.ObjectId(body.doctorId),
+  doctorName: body.doctorName,
+  department: body.department,
+  clinic: body.clinic,
+  room: body.room,
 
-      date: new Date(body.date),
-      time: body.time,
-      status: "booked",
-    });
+  date: new Date(body.date),
+  time: body.time,
+  status: "booked",
+});
 
     // 📧 Email (safe)
     try {

@@ -1,14 +1,43 @@
 import mongoose from "mongoose";
 
-const AuditLogSchema = new mongoose.Schema({
-  actorId: mongoose.Schema.Types.ObjectId,
-  actorRole: String, // doctor | admin
-  action: String,    // VIEW_APPOINTMENT, RESCHEDULE, EMAIL_SENT
-  targetId: mongoose.Schema.Types.ObjectId,
-  ip: String,
-  userAgent: String,
-  createdAt: { type: Date, default: Date.now },
-});
+const AuditLogSchema = new mongoose.Schema(
+  {
+    actorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      refPath: "actorModel",
+    },
+
+    actorModel: {
+      type: String,
+      enum: ["Doctor", "Admin"],
+      required: true,
+    },
+
+    action: {
+      type: String,
+      required: true,
+    },
+
+    targetType: {
+      type: String, // patient | appointment | report
+      required: true,
+    },
+
+    targetId: {
+      type: String,
+    },
+
+    metadata: {
+      type: Object,
+      default: {},
+    },
+
+    ipAddress: String,
+    userAgent: String,
+  },
+  { timestamps: true }
+);
 
 export default mongoose.models.AuditLog ||
   mongoose.model("AuditLog", AuditLogSchema);

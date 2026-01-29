@@ -4,6 +4,7 @@ import Appointment from "@/models/Appointment";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/jwt";
 import mongoose from "mongoose";
+import { logAudit } from "@/lib/audit";
 import { sendAppointmentRescheduledEmail } from "@/lib/mailer";
 import { sendAppointmentCancelledEmail } from "@/lib/mailer";
 /* =========================
@@ -61,6 +62,18 @@ export async function PUT(req, context) {
   clinic: appointment.clinic,
   room: appointment.room,
 });
+await logAudit({
+  actorId: user.id,
+  actorModel: "Doctor",
+  action: "RESCHEDULE_APPOINTMENT",
+  targetType: "appointment",
+  targetId: appointment._id.toString(),
+  metadata: {
+    newDate: appointment.date,
+    newTime: appointment.time,
+  },
+  req,
+});
     return NextResponse.json({
       appointment,
     });
@@ -113,6 +126,18 @@ await sendAppointmentCancelledEmail({
   date: appointment.date,
   time: appointment.time,
 });
+await logAudit({
+  actorId: user.id,
+  actorModel: "Doctor",
+  action: "CANCEL_APPOINTMENT",
+  targetType: "appointment",
+  targetId: appointment._id.toString(),
+  metadata: {
+    reason: "Cancelled by doctor",
+  },
+  req,
+});
+
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("CANCEL ERROR:", err);

@@ -121,3 +121,58 @@ export async function sendDoctorSummaryEmail({
     `,
   });
 }
+
+
+// export async function sendMedicalSummaryEmail({
+//   to,
+//   patientName,
+//   pdfBuffer,
+// }) {
+//   await transporter.sendMail({
+//     from: `"Sheikh Khalifa Hospital" <${process.env.EMAIL_USER}>`,
+//     to,
+//     subject: "Your Medical Summary",
+//     html: `
+//       <p>Dear ${patientName},</p>
+//       <p>Your medical summary is attached as a PDF.</p>
+//       <p>Regards,<br/>Sheikh Khalifa Hospital</p>
+//     `,
+//     attachments: [
+//       {
+//         filename: "medical-summary.pdf",
+//         content: pdfBuffer,
+//       },
+//     ],
+//   });
+// }
+export async function sendMedicalSummaryEmail({
+  to,
+  patientName,
+  pdfBuffer,
+}) {
+  if (!pdfBuffer || !Buffer.isBuffer(pdfBuffer)) {
+    throw new Error("Invalid PDF buffer");
+  }
+
+  await transporter.sendMail({
+    from: `"Sheikh Khalifa Hospital" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: "Your Medical Summary (PDF)",
+    html: `
+      <p>Dear ${patientName},</p>
+      <p>Your medical summary is attached as a PDF.</p>
+      <p>Please keep this document for your records.</p>
+      <br/>
+      <p>Regards,<br/>Sheikh Khalifa Hospital</p>
+    `,
+    attachments: [
+      {
+        filename: "medical-summary.pdf",
+        content: pdfBuffer,
+        contentType: "application/pdf",
+        encoding: "base64",
+        disposition: "attachment",
+      },
+    ],
+  });
+}

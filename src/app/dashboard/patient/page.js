@@ -9,7 +9,6 @@ import {
   Activity,
   FileText,
   User,
-  ChevronRight,
   PlusCircle,
 } from 'lucide-react';
 
@@ -22,7 +21,6 @@ export default function PatientDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
 
-  /* ✅ SAFE INITIALS (NO CRASH EVER) */
   const initials = useMemo(() => {
     if (!user?.fullName) return 'U';
     return user.fullName
@@ -34,7 +32,6 @@ export default function PatientDashboard() {
       .toUpperCase();
   }, [user?.fullName]);
 
-  /* ✅ LOAD APPOINTMENTS FROM MONGODB */
   useEffect(() => {
     if (!user?.id) return;
 
@@ -58,7 +55,6 @@ export default function PatientDashboard() {
     loadAppointments();
   }, [user?.id]);
 
-  /* ⛔ WAIT FOR AUTH */
   if (loading) return null;
   if (!user) return null;
 
@@ -86,14 +82,13 @@ export default function PatientDashboard() {
             <Link
               href="/appointments/book"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold
-                         bg-gradient-to-r from-teal-500 to-emerald-400 shadow-lg hover:opacity-90"
+                         bg-gradient-to-r from-teal-500 to-emerald-400 shadow-lg hover:opacity-90 transition-all"
             >
               <PlusCircle size={20} />
               Book Appointment
             </Link>
           </div>
 
-          {/* ===== GRID ===== */}
           <div className="grid lg:grid-cols-3 gap-8">
 
             {/* ===== LEFT COLUMN ===== */}
@@ -106,7 +101,7 @@ export default function PatientDashboard() {
                     <Activity />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Blood Type</p>
+                    <p className="text-sm text-gray-500 font-medium">Blood Type</p>
                     <p className="text-xl font-bold text-gray-900">—</p>
                   </div>
                 </div>
@@ -116,8 +111,8 @@ export default function PatientDashboard() {
                     <FileText />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Reports</p>
-                    <p className="text-xl font-bold text-gray-900">0</p>
+                    <p className="text-sm text-gray-500 font-medium">Reports</p>
+                    <p className="text-xl font-bold text-gray-900">{appointments.filter(a => a.medicalSummary).length}</p>
                   </div>
                 </div>
               </div>
@@ -125,145 +120,118 @@ export default function PatientDashboard() {
               {/* APPOINTMENTS */}
               <div className="bg-white rounded-3xl border p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold">Upcoming Appointments</h3>
-                  <Link
-                    href="/appointments"
-                    className="text-teal-600 font-semibold text-sm"
-                  >
+                  <h3 className="text-xl font-bold text-gray-900">Upcoming Appointments</h3>
+                  <Link href="/appointments" className="text-teal-600 font-bold text-sm hover:underline">
                     View all
                   </Link>
                 </div>
 
-                {loadingAppointments && (
-                  <p className="text-sm text-gray-500">
-                    Loading appointments...
-                  </p>
-                )}
-
-                {!loadingAppointments && appointments.length === 0 && (
-                  <p className="text-sm text-gray-500">
-                    No upcoming appointments
-                  </p>
-                )}
-
-                <div className="space-y-4">
-                  {appointments.map((app) => (
-                    <div
-                      key={app._id}
-                      className="flex flex-wrap items-center justify-between gap-4
-                                 p-5 bg-slate-50 rounded-2xl border-l-4 border-teal-500"
-                    >
-                      <div>
-                        <p className="font-bold">{app.doctorName}</p>
-                        <p className="text-sm text-gray-500">
-                          {app.department} • {app.clinic} • Room {app.room}
-                        </p>
-                      </div>
-
-                      <div className="text-sm text-gray-500">
-                        <div className="flex items-center gap-2">
-                          <Calendar size={14} />
-                          {new Date(app.date).toLocaleDateString()}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock size={14} />
-                          {app.time}
-                        </div>
-                      </div>
-
-                      <span
-                        className={`px-4 py-1 rounded-full text-xs font-bold
-                          ${
-                            app.status === 'booked'
-                              ? 'bg-green-100 text-green-700'
-                              : app.status === 'rescheduled'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-red-100 text-red-700'
-                          }`}
+                {loadingAppointments ? (
+                  <p className="text-sm text-gray-500">Loading appointments...</p>
+                ) : appointments.length === 0 ? (
+                  <p className="text-sm text-gray-500 text-center py-10">No upcoming appointments found.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {appointments.map((app) => (
+                      <div
+                        key={app._id}
+                        className="flex flex-wrap items-center justify-between gap-4 p-5 bg-slate-50 rounded-2xl border-l-4 border-teal-500"
                       >
-                        {app.status}
-                      </span>
+                        <div className="flex-1 min-w-[200px]">
+                          <p className="font-bold text-gray-900">{app.doctorName}</p>
+                          <p className="text-sm text-gray-500">
+                            {app.department} • Room {app.room}
+                          </p>
+                        </div>
 
-                      <Link href="/map?from=dashboard">
-  <MapPin size={16} />
-</Link>
+                        <div className="text-sm text-gray-600">
+                          <div className="flex items-center gap-2 font-medium">
+                            <Calendar size={14} className="text-teal-600" />
+                            {new Date(app.date).toLocaleDateString()}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock size={14} className="text-teal-600" />
+                            {app.time}
+                          </div>
+                        </div>
 
-                    </div>
-                  ))}
-                </div>
+                        <div className="flex items-center gap-4">
+                          <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider
+                            ${app.status === 'booked' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                            {app.status}
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            <Link 
+                              href="/map?from=dashboard" 
+                              className="p-2 bg-white border rounded-lg hover:bg-teal-50 text-teal-600 transition-colors"
+                              title="View Location"
+                            >
+                              <MapPin size={18} />
+                            </Link>
+
+                            {app.medicalSummary && (
+                              <a
+                                href={`/api/appointments/${app._id}/summary/pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-3 py-2 bg-white border rounded-lg text-sm text-teal-600 font-bold hover:bg-teal-50 transition-colors"
+                              >
+                                <FileText size={16} />
+                                PDF
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
             {/* ===== RIGHT COLUMN ===== */}
             <div className="space-y-8">
-
-              {/* PROFILE */}
+              {/* PROFILE CARD */}
               <div className="bg-white rounded-3xl border p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div
-                    className="w-14 h-14 rounded-full
-                               bg-gradient-to-r from-teal-500 to-emerald-400
-                               flex items-center justify-center
-                               text-white font-bold text-lg"
-                  >
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-teal-500 to-emerald-400 flex items-center justify-center text-white font-bold text-xl shadow-inner">
                     {initials}
                   </div>
                   <div>
-                    <p className="font-bold">{user.fullName}</p>
-                    <p className="text-sm text-gray-500">
-                      United Arab Emirates
-                    </p>
+                    <p className="font-bold text-gray-900">{user.fullName}</p>
+                    <p className="text-sm text-gray-500">United Arab Emirates</p>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <Link
-                    href="/profile"
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50"
-                  >
-                    <User size={18} /> Profile Settings
+                <div className="space-y-2">
+                  <Link href="/profile" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 font-medium text-gray-700 transition-colors">
+                    <User size={18} className="text-teal-600" /> Profile Settings
                   </Link>
-
-                  <Link
-                    href="/medical-history"
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50"
-                  >
-                    <FileText size={18} /> Medical History
+                  <Link href="/medical-history" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 font-medium text-gray-700 transition-colors">
+                    <FileText size={18} className="text-teal-600" /> Medical History
                   </Link>
-
-                  <Link
-                    href="/vitals"
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50"
-                  >
-                    <Activity size={18} /> Vital Logs
+                  <Link href="/vitals" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 font-medium text-gray-700 transition-colors">
+                    <Activity size={18} className="text-teal-600" /> Vital Logs
                   </Link>
                 </div>
               </div>
 
               {/* MAP PROMO */}
-              <div className="rounded-3xl p-8 text-white
-                              bg-gradient-to-r from-teal-500 to-emerald-400
-                              relative overflow-hidden">
+              <div className="rounded-3xl p-8 text-white bg-gradient-to-br from-teal-600 to-emerald-500 relative overflow-hidden shadow-xl shadow-teal-100">
                 <div className="relative z-10">
-                  <h3 className="text-2xl font-extrabold mb-2">
-                    Hospital Map
-                  </h3>
-                  <p className="text-white/90 mb-6">
-                    Navigate easily using our interactive 2D map.
+                  <h3 className="text-2xl font-extrabold mb-2">Hospital Map</h3>
+                  <p className="text-white/90 text-sm mb-6 leading-relaxed">
+                    Navigate easily using our interactive 2D map to find your clinic or room.
                   </p>
                   <Link
-  href="/map?from=dashboard"
-  className="inline-flex items-center gap-2 bg-white text-teal-600 px-5 py-3 rounded-xl font-bold"
->
-  Open Map Explorer
-</Link>
-
+                    href="/map?from=dashboard"
+                    className="inline-flex items-center gap-2 bg-white text-teal-600 px-5 py-3 rounded-xl font-bold shadow-md hover:scale-105 transition-transform"
+                  >
+                    Open Map Explorer
+                  </Link>
                 </div>
-
-                <MapPin
-                  className="absolute right-6 bottom-6 opacity-20"
-                  size={80}
-                />
+                <MapPin className="absolute right-[-10px] bottom-[-10px] opacity-10" size={120} />
               </div>
             </div>
           </div>

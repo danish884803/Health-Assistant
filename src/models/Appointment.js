@@ -25,6 +25,18 @@ const AppointmentSchema = new mongoose.Schema({
     ref: "Doctor",
     required: true,
   },
+    medicalSummary: {
+    diagnosis: String,
+    notes: String,
+    prescription: String,
+    followUpDate: Date,
+    sentAt: Date,
+  },
+  patientEmail: {
+  type: String,
+  required: true,
+}
+,
 
   doctorName: String,
   department: String,
