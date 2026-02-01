@@ -25,11 +25,11 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
 
-    // ✅ Hospital Patient ID (PAT-XXXX)
+    // ✅ REQUIRED ONLY FOR PATIENTS
     patientId: {
       type: String,
       unique: true,
-      required: true,
+      sparse: true, // 🔥 allows admin/doctor without patientId
     },
 
     phone: String,

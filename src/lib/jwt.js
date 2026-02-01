@@ -1,4 +1,3 @@
-
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -10,15 +9,17 @@ export function signJwt(user) {
     role: user.role,
   };
 
-  // ✅ PATIENT
   if (user.role === "patient") {
     payload.fullName = user.fullName;
     payload.patientId = user.patientId;
   }
 
-  // ✅ DOCTOR
   if (user.role === "doctor") {
-    payload.name = user.name; // 🔥 THIS IS THE KEY
+    payload.name = user.name;
+  }
+
+  if (user.role === "admin") {
+    payload.fullName = user.fullName; // ✅ REQUIRED
   }
 
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });

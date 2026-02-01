@@ -55,8 +55,9 @@ const AppointmentSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["booked", "rescheduled", "cancelled"],
+    enum: ["booked", "rescheduled", "cancelled", "completed"],
     default: "booked",
+    
   },
 }, { timestamps: true });
 

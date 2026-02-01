@@ -144,22 +144,39 @@ export async function POST(req, { params }) {
       );
     }
 
-    const appointment = await Appointment.findOneAndUpdate(
-      {
-        _id: new mongoose.Types.ObjectId(id),
-        doctorId: new mongoose.Types.ObjectId(doctor.id),
-      },
-      {
-        medicalSummary: {
-          diagnosis,
-          notes,
-          prescription,
-          followUpDate: followUpDate ? new Date(followUpDate) : null,
-          sentAt: new Date(),
-        },
-      },
-      { new: true }
-    );
+    // const appointment = await Appointment.findOneAndUpdate(
+    //   {
+    //     _id: new mongoose.Types.ObjectId(id),
+    //     doctorId: new mongoose.Types.ObjectId(doctor.id),
+    //   },
+    //   {
+    //     medicalSummary: {
+    //       diagnosis,
+    //       notes,
+    //       prescription,
+    //       followUpDate: followUpDate ? new Date(followUpDate) : null,
+    //       sentAt: new Date(),
+    //     },
+    //   },
+    //   { new: true }
+    // );
+const appointment = await Appointment.findOneAndUpdate(
+  {
+    _id: new mongoose.Types.ObjectId(id),
+    doctorId: new mongoose.Types.ObjectId(doctor.id),
+  },
+  {
+    medicalSummary: {
+      diagnosis,
+      notes,
+      prescription,
+      followUpDate: followUpDate ? new Date(followUpDate) : null,
+      sentAt: new Date(),
+    },
+    status: "completed", // ✅ ADD THIS
+  },
+  { new: true }
+);
 
     if (!appointment) {
       return NextResponse.json(
