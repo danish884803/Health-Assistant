@@ -1,31 +1,68 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
-import { connectDB } from "@/lib/mongoose";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/jwt";
+import { connectDB } from "@/lib/mongodb";
 import AiConfig from "@/models/AiConfig";
 
-export async function POST(req) {
-  const session = await getServerSession(authOptions);
-  if (session.user.role !== "ADMIN")
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+/* =========================
+   GET CONFIG
+========================= */
+export async function GET() {
   await connectDB();
-  await AiConfig.updateMany({}, { isActive: false });
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const admin = verifyToken(token);
+  if (admin.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  let config = await AiConfig.findOne({ isActive: true });
+
+  // Auto-create default config if missing
+  if (!config) {
+    config = await AiConfig.create({
+      name: "Hospital Assistant",
+      systemPrompt: "You are a hospital assistant...",
+      languages: ["en"],
+      isActive: false,
+    });
+  }
+
+  return NextResponse.json({ config });
+}
+
+/* =========================
+   UPDATE CONFIG
+========================= */
+export async function PUT(req) {
+  await connectDB();
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const admin = verifyToken(token);
+  if (admin.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const body = await req.json();
 
-  const config = await AiConfig.create({
-    ...body,
-    isActive: true,
-    approvedBy: session.user.id,
-    approvedAt: new Date()
-  });
+  await AiConfig.updateMany({}, { isActive: false });
 
-  return NextResponse.json(config);
-}
+  const updated = await AiConfig.findByIdAndUpdate(
+    body._id,
+    {
+      ...body,
+      approvedBy: admin.email,
+      approvedAt: new Date(),
+      isActive: true,
+    },
+    { new: true }
+  );
 
-export async function GET() {
-  await connectDB();
-  const config = await AiConfig.findOne({ isActive: true });
-  return NextResponse.json(config);
+  return NextResponse.json({ success: true, config: updated });
 }

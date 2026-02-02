@@ -8,18 +8,74 @@ export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
-      id: 1,
+      id: Date.now(),
       role: 'assistant',
       content:
         "Hello! How can I help you today? I can answer questions about hospital services, departments, and appointments.",
     },
   ]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, open]);
+
+  /* =========================
+     SEND MESSAGE
+  ========================= */
+  async function sendMessage() {
+    if (!input.trim() || loading) return;
+
+    const userMessage = {
+      id: Date.now(),
+      role: 'user',
+      content: input.trim(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, userMessage],
+          language: 'en', // later auto-detect
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data?.content) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            role: 'assistant',
+            content: data.content,
+          },
+        ]);
+      } else {
+        throw new Error('Empty AI response');
+      }
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 2,
+          role: 'assistant',
+          content:
+            "Sorry, I'm currently unavailable. Please contact hospital reception.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <>
@@ -51,7 +107,9 @@ export default function Chatbot() {
                   <p className="font-semibold leading-tight">
                     Hospital Assistant
                   </p>
-                  <p className="text-xs opacity-90">Online</p>
+                  <p className="text-xs opacity-90">
+                    {loading ? 'Typing…' : 'Online'}
+                  </p>
                 </div>
               </div>
               <button onClick={() => setOpen(false)}>
@@ -71,7 +129,7 @@ export default function Chatbot() {
                   <div
                     className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                       m.role === 'user'
-                        ? 'bg-white border shadow-sm text-gray-800 rounded-br-md'
+                        ? 'bg-teal-600 text-white rounded-br-md'
                         : 'bg-white text-gray-800 shadow rounded-bl-md'
                     }`}
                   >
@@ -88,12 +146,14 @@ export default function Chatbot() {
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="Ask about our services..."
                   className="w-full pl-5 pr-14 py-3 text-sm rounded-full border shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <button
-                  onClick={() => {}}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-cyan-400 text-white flex items-center justify-center shadow"
+                  onClick={sendMessage}
+                  disabled={loading}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-cyan-400 text-white flex items-center justify-center shadow disabled:opacity-50"
                 >
                   <Send size={16} />
                 </button>
