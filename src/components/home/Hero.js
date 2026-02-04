@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function Hero() {
   return (
     <section className="relative bg-gradient-to-r from-[#f4fffb] to-white overflow-hidden">
@@ -25,12 +26,16 @@ export default function Hero() {
 
           {/* Buttons */}
           <div className="mt-10 flex items-center gap-5">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-emerald-400 text-white px-7 py-3.5 rounded-full text-sm font-medium shadow-md hover:opacity-90 transition">
+            <Link href="/login" >
+            <button  className="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-emerald-400 text-white px-7 py-3.5 rounded-full text-sm font-medium shadow-md hover:opacity-90 transition">
               Book Appointment →
             </button>
+            </Link>
+            <Link href="/services">
             <button className="px-7 py-3.5 rounded-full border border-teal-500 text-teal-600 text-sm font-medium hover:bg-teal-50 transition">
               Our Services
             </button>
+            </Link>
           </div>
 
           {/* Stats */}
