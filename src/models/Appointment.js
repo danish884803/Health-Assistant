@@ -1,4 +1,3 @@
-// src/models/Appointment.js
 import mongoose from "mongoose";
 
 const AppointmentSchema = new mongoose.Schema({
@@ -58,7 +57,13 @@ const AppointmentSchema = new mongoose.Schema({
     enum: ["booked", "rescheduled", "cancelled", "completed"],
     default: "booked",
     
-  },
+  },roomId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "HospitalRoom",
+},
+
+roomCode: String,
+
 }, { timestamps: true });
 
 export default mongoose.models.Appointment ||

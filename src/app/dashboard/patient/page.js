@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Calendar,
   Clock,
@@ -18,6 +19,8 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function PatientDashboard() {
   const { user, loading } = useAuth();
+  const router = useRouter(); // ✅ Added router instance
+
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
 
@@ -162,13 +165,22 @@ export default function PatientDashboard() {
                           </span>
 
                           <div className="flex items-center gap-2">
-                            <Link 
-                              href="/map?from=dashboard" 
+                            {/* ✅ Map Navigation Button */}
+                            <button
+                              onClick={() => {
+                                if (!app.roomId) {
+                                  alert("Location detail not available for this room.");
+                                  return;
+                                }
+                                // router.push(`/map?room=${app.roomId}&from=dashboard`);
+                                router.push(`/map?room=${app.roomId}&from=dashboard`);
+
+                              }}
                               className="p-2 bg-white border rounded-lg hover:bg-teal-50 text-teal-600 transition-colors"
-                              title="View Location"
+                              title="View Location on Map"
                             >
                               <MapPin size={18} />
-                            </Link>
+                            </button>
 
                             {app.medicalSummary && (
                               <a

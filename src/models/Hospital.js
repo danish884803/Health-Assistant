@@ -1,4 +1,3 @@
-// src/models/Hospital.js
 import mongoose from "mongoose";
 
 const HospitalSchema = new mongoose.Schema({

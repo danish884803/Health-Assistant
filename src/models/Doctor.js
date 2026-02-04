@@ -7,6 +7,10 @@ const DoctorSchema = new mongoose.Schema({
   passwordHash: String,
   department: String,
   clinic: String,
+  roomId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "HospitalRoom",
+},
   room: String,
 
   availability: {

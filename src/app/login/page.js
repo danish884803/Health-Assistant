@@ -35,43 +35,6 @@ const { reloadUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // 🔐 REAL LOGIN HANDLER
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError('');
-
-  //   try {
-  //     const res = await fetch('/api/auth/login', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-
-  //       // 🔴 THIS IS THE FIX
-  //       credentials: 'include',
-
-  //       body: JSON.stringify({
-  //         email,
-  //         password,
-  //         role: userType,
-  //       }),
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (!res.ok) {
-  //       setError(data.error || 'Login failed');
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     // ✅ Redirect by role
-  //     router.push(`/dashboard/${data.role}`);
-  //   } catch (err) {
-  //     setError('Something went wrong. Try again.');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 const handleSubmit = async (e) => {
   e.preventDefault();
   setLoading(true);

@@ -19,7 +19,6 @@ export async function GET() {
       throw e;
     });
 
-    // ✅ Explicit font load (NO Helvetica)
     doc.registerFont("Roboto", fs.readFileSync(fontPath));
     doc.font("Roboto");
 

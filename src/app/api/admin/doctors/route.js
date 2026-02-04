@@ -30,7 +30,7 @@ export async function GET() {
 
     const doctors = await Doctor.find().sort({ createdAt: -1 });
     return NextResponse.json({ doctors });
-  } catch {
+  } catch (err) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }
@@ -50,6 +50,7 @@ export async function POST(req) {
       department,
       clinic,
       room,
+      roomId,          // ✅ Destructured correctly
       availability,
     } = await req.json();
 
@@ -68,7 +69,8 @@ export async function POST(req) {
       passwordHash,
       department,
       clinic,
-      room,
+      room,            // Display string
+      roomId,          // ✅ Map navigation reference
       availability,
     });
 
@@ -88,7 +90,7 @@ export async function POST(req) {
 }
 
 /* =========================
-   PUT — UPDATE DOCTOR (WITH PASSWORD)
+   PUT — UPDATE DOCTOR
 ========================= */
 export async function PUT(req) {
   try {
@@ -103,6 +105,7 @@ export async function PUT(req) {
       department,
       clinic,
       room,
+      roomId,          // ✅ Added roomId to destructuring
       availability,
     } = await req.json();
 
@@ -112,6 +115,7 @@ export async function PUT(req) {
       department,
       clinic,
       room,
+      roomId,          // ✅ Added roomId to update object
       availability,
     };
 
@@ -166,7 +170,7 @@ export async function DELETE(req) {
     });
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
     return NextResponse.json({ error: "Delete failed" }, { status: 500 });
   }
 }

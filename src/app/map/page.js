@@ -1,7 +1,7 @@
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 import HospitalMap from "@/components/map/HospitalMap";
-
+import { MapPin } from 'lucide-react';
 export default function MapPage() {
     return (
         <main className="main-container">
