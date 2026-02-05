@@ -16,7 +16,7 @@ import {
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { useAuth } from '@/context/AuthContext';
-
+import Chatbot from '@/components/chat/Chatbot';
 export default function PatientDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -308,6 +308,7 @@ export default function PatientDashboard() {
             </div>
           </div>
         </div>
+        <Chatbot/>
       </main>
 
       <Footer />

@@ -14,7 +14,6 @@ export default function Home() {
       <HospitalInfo/>
       {/* <HospitalMap /> */}
       <Chatbot />
-      {/* Additional sections like Departments, AI banner can go here */}
       <Footer />
     </main>
   );

@@ -133,11 +133,6 @@ export default function AssistantPage() {
               onClick={() => sendMessage('Show my appointments')}
             />
             <QuickBtn
-              icon={Stethoscope}
-              label="Find Cardiologist"
-              onClick={() => sendMessage('Find cardiology doctor')}
-            />
-            <QuickBtn
               icon={MapPin}
               label="Hospital Map"
               onClick={() => router.push('/map')}
