@@ -19,22 +19,28 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function PatientDashboard() {
   const { user, loading } = useAuth();
-  const router = useRouter(); // ✅ Added router instance
+  const router = useRouter();
 
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
+
+  // ✅ NEW: profile data
+  const [profile, setProfile] = useState(null);
 
   const initials = useMemo(() => {
     if (!user?.fullName) return 'U';
     return user.fullName
       .split(' ')
       .filter(Boolean)
-      .map((n) => n[0])
+      .map(n => n[0])
       .slice(0, 2)
       .join('')
       .toUpperCase();
   }, [user?.fullName]);
 
+  /* =========================
+     LOAD APPOINTMENTS
+  ========================= */
   useEffect(() => {
     if (!user?.id) return;
 
@@ -48,7 +54,7 @@ export default function PatientDashboard() {
           const data = await res.json();
           setAppointments(data.appointments || []);
         }
-      } catch (err) {
+      } catch {
         console.error('Failed to load appointments');
       } finally {
         setLoadingAppointments(false);
@@ -57,6 +63,28 @@ export default function PatientDashboard() {
 
     loadAppointments();
   }, [user?.id]);
+
+  /* =========================
+     LOAD PROFILE (BLOOD TYPE)
+  ========================= */
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/profile', {
+          credentials: 'include',
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setProfile(data.user);
+      } catch {
+        console.error('Failed to load profile');
+      }
+    }
+
+    loadProfile();
+  }, []);
 
   if (loading) return null;
   if (!user) return null;
@@ -104,8 +132,18 @@ export default function PatientDashboard() {
                     <Activity />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">Blood Type</p>
-                    <p className="text-xl font-bold text-gray-900">—</p>
+                    <p className="text-sm text-gray-500 font-medium">
+                      Blood Type
+                    </p>
+                    <p
+                      className={`text-xl font-bold ${
+                        profile?.bloodGroup
+                          ? 'text-gray-900'
+                          : 'text-red-500'
+                      }`}
+                    >
+                      {profile?.bloodGroup || 'Update Profile'}
+                    </p>
                   </div>
                 </div>
 
@@ -115,7 +153,9 @@ export default function PatientDashboard() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 font-medium">Reports</p>
-                    <p className="text-xl font-bold text-gray-900">{appointments.filter(a => a.medicalSummary).length}</p>
+                    <p className="text-xl font-bold text-gray-900">
+                      {appointments.filter(a => a.medicalSummary).length}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -123,25 +163,36 @@ export default function PatientDashboard() {
               {/* APPOINTMENTS */}
               <div className="bg-white rounded-3xl border p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-gray-900">Upcoming Appointments</h3>
-                  <Link href="/appointments" className="text-teal-600 font-bold text-sm hover:underline">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Upcoming Appointments
+                  </h3>
+                  <Link
+                    href="/appointments"
+                    className="text-teal-600 font-bold text-sm hover:underline"
+                  >
                     View all
                   </Link>
                 </div>
 
                 {loadingAppointments ? (
-                  <p className="text-sm text-gray-500">Loading appointments...</p>
+                  <p className="text-sm text-gray-500">
+                    Loading appointments...
+                  </p>
                 ) : appointments.length === 0 ? (
-                  <p className="text-sm text-gray-500 text-center py-10">No upcoming appointments found.</p>
+                  <p className="text-sm text-gray-500 text-center py-10">
+                    No upcoming appointments found.
+                  </p>
                 ) : (
                   <div className="space-y-4">
-                    {appointments.map((app) => (
+                    {appointments.map(app => (
                       <div
                         key={app._id}
                         className="flex flex-wrap items-center justify-between gap-4 p-5 bg-slate-50 rounded-2xl border-l-4 border-teal-500"
                       >
                         <div className="flex-1 min-w-[200px]">
-                          <p className="font-bold text-gray-900">{app.doctorName}</p>
+                          <p className="font-bold text-gray-900">
+                            {app.doctorName}
+                          </p>
                           <p className="text-sm text-gray-500">
                             {app.department} • Room {app.room}
                           </p>
@@ -149,40 +200,51 @@ export default function PatientDashboard() {
 
                         <div className="text-sm text-gray-600">
                           <div className="flex items-center gap-2 font-medium">
-                            <Calendar size={14} className="text-teal-600" />
+                            <Calendar
+                              size={14}
+                              className="text-teal-600"
+                            />
                             {new Date(app.date).toLocaleDateString()}
                           </div>
                           <div className="flex items-center gap-2">
-                            <Clock size={14} className="text-teal-600" />
+                            <Clock
+                              size={14}
+                              className="text-teal-600"
+                            />
                             {app.time}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-4">
-                          <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                            ${app.status === 'booked' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                          <span
+                            className={`px-4 py-1 rounded-full text-xs font-bold uppercase
+                              ${
+                                app.status === 'booked'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-blue-100 text-blue-700'
+                              }`}
+                          >
                             {app.status}
                           </span>
 
-                          <div className="flex items-center gap-2">
-                            {/* ✅ Map Navigation Button */}
-                            <button
-                              onClick={() => {
-                                if (!app.roomId) {
-                                  alert("Location detail not available for this room.");
-                                  return;
-                                }
-                                // router.push(`/map?room=${app.roomId}&from=dashboard`);
-                                router.push(`/map?room=${app.roomId}&from=dashboard`);
-
-                              }}
-                              className="p-2 bg-white border rounded-lg hover:bg-teal-50 text-teal-600 transition-colors"
-                              title="View Location on Map"
-                            >
-                              <MapPin size={18} />
-                            </button>
-
-                            {app.medicalSummary && (
+                          <button
+                            onClick={() => {
+                              if (!app.roomId) {
+                                alert(
+                                  'Location detail not available for this room.'
+                                );
+                                return;
+                              }
+                              router.push(
+                                `/map?room=${app.roomId}&from=dashboard`
+                              );
+                            }}
+                            className="p-2 bg-white border rounded-lg hover:bg-teal-50 text-teal-600"
+                            title="View Location on Map"
+                          >
+                            <MapPin size={18} />
+                          </button>
+                           {app.medicalSummary && (
                               <a
                                 href={`/api/appointments/${app._id}/summary/pdf`}
                                 target="_blank"
@@ -193,7 +255,6 @@ export default function PatientDashboard() {
                                 PDF
                               </a>
                             )}
-                          </div>
                         </div>
                       </div>
                     ))}
@@ -204,47 +265,46 @@ export default function PatientDashboard() {
 
             {/* ===== RIGHT COLUMN ===== */}
             <div className="space-y-8">
+
               {/* PROFILE CARD */}
               <div className="bg-white rounded-3xl border p-8">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-teal-500 to-emerald-400 flex items-center justify-center text-white font-bold text-xl shadow-inner">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-teal-500 to-emerald-400 flex items-center justify-center text-white font-bold text-xl">
                     {initials}
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">{user.fullName}</p>
-                    <p className="text-sm text-gray-500">United Arab Emirates</p>
+                    <p className="text-sm text-gray-500">
+                      United Arab Emirates
+                    </p>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Link href="/profile" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 font-medium text-gray-700 transition-colors">
-                    <User size={18} className="text-teal-600" /> Profile Settings
-                  </Link>
-                  <Link href="/medical-history" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 font-medium text-gray-700 transition-colors">
-                    <FileText size={18} className="text-teal-600" /> Medical History
-                  </Link>
-                  <Link href="/vitals" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 font-medium text-gray-700 transition-colors">
-                    <Activity size={18} className="text-teal-600" /> Vital Logs
-                  </Link>
-                </div>
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 font-medium text-gray-700"
+                >
+                  <User size={18} className="text-teal-600" />
+                  Profile Settings
+                </Link>
               </div>
 
               {/* MAP PROMO */}
-              <div className="rounded-3xl p-8 text-white bg-gradient-to-br from-teal-600 to-emerald-500 relative overflow-hidden shadow-xl shadow-teal-100">
-                <div className="relative z-10">
-                  <h3 className="text-2xl font-extrabold mb-2">Hospital Map</h3>
-                  <p className="text-white/90 text-sm mb-6 leading-relaxed">
-                    Navigate easily using our interactive 2D map to find your clinic or room.
-                  </p>
-                  <Link
-                    href="/map?from=dashboard"
-                    className="inline-flex items-center gap-2 bg-white text-teal-600 px-5 py-3 rounded-xl font-bold shadow-md hover:scale-105 transition-transform"
-                  >
-                    Open Map Explorer
-                  </Link>
-                </div>
-                <MapPin className="absolute right-[-10px] bottom-[-10px] opacity-10" size={120} />
+              <div className="rounded-3xl p-8 text-white bg-gradient-to-br from-teal-600 to-emerald-500 shadow-xl">
+                <h3 className="text-2xl font-extrabold mb-2">
+                  Hospital Map
+                </h3>
+                <p className="text-white/90 text-sm mb-6">
+                  Navigate easily using our interactive hospital map.
+                </p>
+                <Link
+                  href="/map?from=dashboard"
+                  className="inline-flex items-center gap-2 bg-white text-teal-600 px-5 py-3 rounded-xl font-bold"
+                >
+                  Open Map Explorer
+                </Link>
               </div>
+
             </div>
           </div>
         </div>
