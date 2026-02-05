@@ -77,7 +77,7 @@ export default function AdminChatbotPage() {
           {/* SYSTEM PROMPT */}
           <div className="bg-white border rounded-3xl p-8 space-y-4">
             <h3 className="font-bold text-lg text-gray-900">
-              System Prompt (7.4 Safety Rule)
+              System Prompt
             </h3>
 
             <textarea

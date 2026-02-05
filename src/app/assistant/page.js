@@ -1,0 +1,355 @@
+// 'use client';
+
+// import { useState, useRef, useEffect } from 'react';
+// import Header from '@/components/common/Header';
+// import Footer from '@/components/common/Footer';
+// import { Send, Bot, User, Calendar, MapPin, Stethoscope } from 'lucide-react';
+
+// export default function AssistantPage() {
+//   const [messages, setMessages] = useState([
+//     {
+//       role: 'assistant',
+//       content:
+//         'Hello 👋 I am your Hospital AI Assistant. I can help with appointments, doctors, navigation, and services.',
+//     },
+//   ]);
+//   const [input, setInput] = useState('');
+//   const [loading, setLoading] = useState(false);
+//   const endRef = useRef(null);
+
+//   useEffect(() => {
+//     endRef.current?.scrollIntoView({ behavior: 'smooth' });
+//   }, [messages]);
+
+//   async function sendMessage() {
+//     if (!input.trim() || loading) return;
+
+//     const userMsg = { role: 'user', content: input };
+//     setMessages((prev) => [...prev, userMsg]);
+//     setInput('');
+//     setLoading(true);
+
+//     try {
+//       const res = await fetch('/api/chat', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({
+//           messages: [...messages, userMsg],
+//         }),
+//       });
+
+//       const data = await res.json();
+
+//       if (data?.content) {
+//         setMessages((prev) => [
+//           ...prev,
+//           { role: 'assistant', content: data.content },
+//         ]);
+//       }
+//     } catch {
+//       setMessages((prev) => [
+//         ...prev,
+//         {
+//           role: 'assistant',
+//           content:
+//             'Sorry, I am temporarily unavailable. Please contact hospital reception.',
+//         },
+//       ]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-slate-50">
+//       <Header />
+
+//       <main className="pt-28 pb-20 max-w-4xl mx-auto px-6">
+//         <div className="bg-white border rounded-3xl shadow-sm flex flex-col h-[70vh]">
+
+//           {/* HEADER */}
+//           <div className="p-5 border-b flex items-center gap-3">
+//             <Bot className="text-teal-600" />
+//             <h1 className="font-bold text-lg">Hospital AI Assistant</h1>
+//           </div>
+
+//           {/* QUICK ACTIONS */}
+//           <div className="p-4 border-b flex gap-3 flex-wrap text-sm">
+//             <QuickBtn icon={Calendar} label="My Appointments" />
+//             <QuickBtn icon={Stethoscope} label="Find Doctor" />
+//             <QuickBtn icon={MapPin} label="Hospital Map" />
+//           </div>
+
+//           {/* CHAT */}
+//           <div className="flex-1 overflow-y-auto p-6 space-y-4">
+//             {messages.map((m, i) => (
+//               <div
+//                 key={i}
+//                 className={`flex ${
+//                   m.role === 'user' ? 'justify-end' : 'justify-start'
+//                 }`}
+//               >
+//                 <div
+//                   className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm ${
+//                     m.role === 'user'
+//                       ? 'bg-teal-600 text-white'
+//                       : 'bg-slate-100 text-gray-800'
+//                   }`}
+//                 >
+//                   {m.content}
+//                 </div>
+//               </div>
+//             ))}
+//             <div ref={endRef} />
+//           </div>
+
+//           {/* INPUT */}
+//           <div className="p-4 border-t flex gap-3">
+//             <input
+//               value={input}
+//               onChange={(e) => setInput(e.target.value)}
+//               onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+//               placeholder="Ask about doctors, appointments, navigation..."
+//               className="flex-1 border rounded-full px-4 py-2 focus:ring-2 focus:ring-teal-500"
+//             />
+//             <button
+//               onClick={sendMessage}
+//               className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center"
+//             >
+//               <Send size={16} />
+//             </button>
+//           </div>
+//         </div>
+//       </main>
+
+//       <Footer />
+//     </div>
+//   );
+// }
+
+// /* QUICK ACTION BUTTON */
+// function QuickBtn({ icon: Icon, label }) {
+//   return (
+//     <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full hover:bg-teal-50 text-gray-700">
+//       <Icon size={16} />
+//       {label}
+//     </button>
+//   );
+// }
+'use client';
+
+import { useState, useRef, useEffect } from 'react';
+import Header from '@/components/common/Header';
+import Footer from '@/components/common/Footer';
+import { Send, Bot, Calendar, MapPin, Stethoscope } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+export default function AssistantPage() {
+  const [messages, setMessages] = useState([
+    {
+      role: 'assistant',
+      content:
+        'Hello 👋 I am your Hospital AI Assistant. I can help with appointments, doctors, and navigation.',
+    },
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const endRef = useRef(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  async function sendMessage(textFromButton) {
+    const text = textFromButton ?? input;
+    if (!text.trim() || loading) return;
+
+    const userMsg = { role: 'user', content: text };
+
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, userMsg],
+        }),
+      });
+
+      const data = await res.json();
+
+      /* =========================
+         INTENT: MY APPOINTMENTS
+      ========================= */
+      if (data.intent === 'MY_APPOINTMENTS') {
+        const appRes = await fetch('/api/appointments', {
+          credentials: 'include',
+        });
+        const result = await appRes.json();
+
+        if (!result.appointments || result.appointments.length === 0) {
+          setMessages(prev => [
+            ...prev,
+            {
+              role: 'assistant',
+              content: 'You have no upcoming appointments.',
+            },
+          ]);
+        } else {
+          const list = result.appointments
+            .map(
+              a =>
+                `• ${a.doctorName} (${a.department}) on ${new Date(
+                  a.date
+                ).toLocaleDateString()} at ${a.time}`
+            )
+            .join('\n');
+
+          setMessages(prev => [
+            ...prev,
+            {
+              role: 'assistant',
+              content: `Here are your appointments:\n\n${list}`,
+            },
+          ]);
+        }
+        return;
+      }
+
+      /* =========================
+         INTENT: NAVIGATION
+      ========================= */
+      if (data.intent === 'NAVIGATE' && data.roomCode) {
+        setMessages(prev => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: `📍 Taking you to ${data.roomCode.replace('-', ' ')}`,
+          },
+        ]);
+
+        setTimeout(() => {
+          router.push(`/map?room=${data.roomCode}`);
+        }, 1200);
+
+        return;
+      }
+
+      /* =========================
+         NORMAL CHAT RESPONSE
+      ========================= */
+      if (data?.content) {
+        setMessages(prev => [
+          ...prev,
+          { role: 'assistant', content: data.content },
+        ]);
+      }
+    } catch {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content:
+            'Sorry, I am temporarily unavailable. Please contact hospital reception.',
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <Header />
+
+      <main className="pt-28 pb-20 max-w-4xl mx-auto px-6">
+        <div className="bg-white border rounded-3xl shadow-sm flex flex-col h-[70vh]">
+
+          {/* HEADER */}
+          <div className="p-5 border-b flex items-center gap-3">
+            <Bot className="text-teal-600" />
+            <h1 className="font-bold text-lg">Hospital AI Assistant</h1>
+          </div>
+
+          {/* QUICK ACTIONS */}
+          <div className="p-4 border-b flex gap-3 flex-wrap text-sm">
+            <QuickBtn
+              icon={Calendar}
+              label="My Appointments"
+              onClick={() => sendMessage('Show my appointments')}
+            />
+            <QuickBtn
+              icon={Stethoscope}
+              label="Find Doctor"
+              onClick={() => sendMessage('Find cardiology doctor')}
+            />
+            <QuickBtn
+              icon={MapPin}
+              label="Hospital Map"
+              onClick={() => router.push('/map')}
+            />
+          </div>
+
+          {/* CHAT */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                className={`flex ${
+                  m.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
+              >
+                <div
+                  className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${
+                    m.role === 'user'
+                      ? 'bg-teal-600 text-white'
+                      : 'bg-slate-100 text-gray-800'
+                  }`}
+                >
+                  {m.content}
+                </div>
+              </div>
+            ))}
+            <div ref={endRef} />
+          </div>
+
+          {/* INPUT */}
+          <div className="p-4 border-t flex gap-3">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Ask about doctors, appointments, navigation..."
+              className="flex-1 border rounded-full px-4 py-2 focus:ring-2 focus:ring-teal-500"
+            />
+            <button
+              onClick={() => sendMessage()}
+              className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center"
+            >
+              <Send size={16} />
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+/* QUICK BUTTON */
+function QuickBtn({ icon: Icon, label, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full hover:bg-teal-50 text-gray-700"
+    >
+      <Icon size={16} />
+      {label}
+    </button>
+  );
+}
