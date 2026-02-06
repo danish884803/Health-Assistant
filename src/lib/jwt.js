@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-
+export { jwt }; 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export function signJwt(user) {
