@@ -1,33 +1,72 @@
+// import { NextResponse } from "next/server";
+// import { verifyToken } from "@/lib/jwt";
+
+// export function middleware(req) {
+//   const token = req.cookies.get("token")?.value; 
+//   const path = req.nextUrl.pathname;
+
+//   if (!token && path.startsWith("/dashboard")) {
+//     return NextResponse.redirect(new URL("/login", req.url));
+//   }
+
+//   if (token) {
+//     try {
+//       const user = verifyToken(token);
+
+//       if (path.startsWith("/dashboard/admin") && user.role !== "admin") {
+//         return NextResponse.redirect(new URL("/", req.url));
+//       }
+
+//       if (path.startsWith("/dashboard/doctor") && user.role !== "doctor") {
+//         return NextResponse.redirect(new URL("/", req.url));
+//       }
+
+//       if (path.startsWith("/dashboard/patient") && user.role !== "patient") {
+//         return NextResponse.redirect(new URL("/", req.url));
+//       }
+
+//     } catch {
+//       return NextResponse.redirect(new URL("/login", req.url));
+//     }
+//   }
+
+//   return NextResponse.next();
+// }
+
+// export const config = {
+//   matcher: ["/dashboard/:path*"],
+// };
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/jwt";
+import { cookies } from "next/headers";
 
 export function middleware(req) {
-  const token = req.cookies.get("token")?.value; 
+  const token = cookies().get("token")?.value;
   const path = req.nextUrl.pathname;
 
-  if (!token && path.startsWith("/dashboard")) {
+  // Not logged in → block all dashboard routes
+  if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  if (token) {
-    try {
-      const user = verifyToken(token);
+  try {
+    const user = verifyToken(token);
 
-      if (path.startsWith("/dashboard/admin") && user.role !== "admin") {
-        return NextResponse.redirect(new URL("/", req.url));
-      }
-
-      if (path.startsWith("/dashboard/doctor") && user.role !== "doctor") {
-        return NextResponse.redirect(new URL("/", req.url));
-      }
-
-      if (path.startsWith("/dashboard/patient") && user.role !== "patient") {
-        return NextResponse.redirect(new URL("/", req.url));
-      }
-
-    } catch {
-      return NextResponse.redirect(new URL("/login", req.url));
+    // Role-based protection
+    if (path.startsWith("/dashboard/admin") && user.role !== "admin") {
+      return NextResponse.redirect(new URL("/", req.url));
     }
+
+    if (path.startsWith("/dashboard/doctor") && user.role !== "doctor") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (path.startsWith("/dashboard/patient") && user.role !== "patient") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+  } catch (err) {
+    // Invalid / expired token
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
