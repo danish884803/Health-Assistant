@@ -4,13 +4,10 @@ import { verifyToken } from "@/lib/jwt";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 
-/* =========================
-   GET PROFILE
-========================= */
 export async function GET() {
   await connectDB();
 
-  const cookieStore = await cookies(); // ✅ FIX
+  const cookieStore = await cookies(); 
   const token = cookieStore.get("token")?.value;
 
   if (!token) {
@@ -33,13 +30,11 @@ export async function GET() {
   return NextResponse.json({ user });
 }
 
-/* =========================
-   UPDATE PROFILE
-========================= */
+
 export async function PUT(req) {
   await connectDB();
 
-  const cookieStore = await cookies(); // ✅ FIX
+  const cookieStore = await cookies(); 
   const token = cookieStore.get("token")?.value;
 
   if (!token) {

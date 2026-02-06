@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bot, Sparkles } from "lucide-react"; // Import some nice icons
+import { Bot, Sparkles } from "lucide-react"; 
 
 export default function Hero() {
   return (
@@ -53,7 +53,6 @@ export default function Hero() {
         {/* RIGHT SIDE */}
         <div className="relative top-8 ">
           <div className="grid  grid-cols-2 gap-6 mb-6">
-            {/* New AI ASSISTANT CARD */}
             <Link href="/assistant" className="group">
               <div className="bg-gradient-to-br from-teal-500 to-emerald-400 rounded-2xl p-5 shadow-lg transform group-hover:-translate-y-1 transition text-white">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 bg-white/20">

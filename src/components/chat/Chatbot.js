@@ -281,9 +281,7 @@ export default function Chatbot() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, open]);
 
-  /* =========================
-      SPEECH & VOICE LOGIC
-  ========================= */
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -310,9 +308,7 @@ export default function Chatbot() {
     isRecognizingRef.current ? recognitionRef.current.stop() : recognitionRef.current.start();
   }
 
-  /* =========================
-      CORE LOGIC (INTEGRATED)
-  ========================= */
+ 
   async function sendMessage(textFromButton) {
     const text = textFromButton ?? input;
     if (!text.trim() || loading) return;
@@ -334,7 +330,7 @@ export default function Chatbot() {
 
       const data = await res.json();
 
-      // 1. Handle Appointment Intent
+
       if (data.intent === 'MY_APPOINTMENTS') {
         const r = await fetch('/api/appointments', { credentials: 'include' });
         const a = await r.json();
@@ -347,7 +343,6 @@ export default function Chatbot() {
         return;
       }
 
-      // 2. Handle Doctor Intent
       if (data.intent === 'FIND_DOCTOR' && data.department) {
         const r = await fetch(`/api/doctor?department=${encodeURIComponent(data.department)}`);
         const d = await r.json();
@@ -360,19 +355,18 @@ export default function Chatbot() {
         return;
       }
 
-      // 3. Handle Navigation Intent
       if (data.intent === 'NAVIGATE' && data.roomCode) {
         pushAssistant(`📍 Taking you to ${data.roomCode.replace('-', ' ')}`);
         setTimeout(() => router.push(`/map?room=${data.roomCode}`), 1200);
         return;
       }
 
-      // 4. Fallback to normal AI response
       if (data.content) {
         pushAssistant(data.content);
       }
 
-    } catch {
+    } catch (error) {
+      console.error('Error in sendMessage:', error);
       pushAssistant("Sorry, I'm currently unavailable. Please contact hospital reception.");
     } finally {
       setLoading(false);
@@ -409,7 +403,6 @@ export default function Chatbot() {
                   <div className="flex items-end gap-2 max-w-[85%]">
                     <div className={`px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${m.role === 'user' ? 'bg-teal-600 text-white' : 'bg-white text-gray-800 shadow'}`}>
                       {m.content}
-                      {/* Special Quick Action Buttons for the first message */}
                       {m.id === 'init' && (
                         <div className="mt-3 pt-3 border-t flex flex-col gap-2">
                             <button onClick={() => sendMessage('Show my appointments')} className="flex items-center gap-2 text-[12px] bg-slate-50 p-2 rounded-lg hover:bg-teal-50 transition-colors">

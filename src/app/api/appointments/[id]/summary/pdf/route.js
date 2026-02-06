@@ -11,7 +11,6 @@ export async function GET(req, context) {
   try {
     await connectDB();
 
-    /* 🔐 AUTH */
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     if (!token) {
@@ -20,7 +19,6 @@ export async function GET(req, context) {
 
     const user = verifyToken(token);
 
-    /* ✅ PARAM FIX */
     const { id } = await context.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -39,19 +37,17 @@ export async function GET(req, context) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    /* ✅ FONT PATH */
     const fontPath = path.join(
       process.cwd(),
       "public/fonts/Roboto-Regular.ttf"
     );
 
-    /* ✅ STREAM SAFE PDF GENERATION */
     const pdfBuffer = await new Promise((resolve, reject) => {
       try {
         const doc = new PDFDocument({
           size: "A4",
           margin: 50,
-          font: fontPath, // 🔥 blocks Helvetica forever
+          font: fontPath, 
         });
 
         const chunks = [];
@@ -60,7 +56,6 @@ export async function GET(req, context) {
         doc.on("end", () => resolve(Buffer.concat(chunks)));
         doc.on("error", reject);
 
-        /* ===== CONTENT ===== */
         const s = appointment.medicalSummary;
 
         doc.fontSize(18).text("Medical Summary", { align: "center" });
@@ -106,7 +101,6 @@ export async function GET(req, context) {
       }
     });
 
-    /* ✅ RETURN VALID PDF */
     return new NextResponse(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",

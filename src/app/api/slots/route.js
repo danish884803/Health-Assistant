@@ -44,14 +44,12 @@ export async function GET(req) {
     return NextResponse.json({ slots: [] });
   }
 
-  // Generate all slots
   const allSlots = generateSlots(
     doctor.availability.startTime,
     doctor.availability.endTime,
     doctor.availability.slotDuration
   );
 
-  // Get booked slots
   const booked = await Appointment.find({
     doctorId,
     date: new Date(date),
@@ -60,7 +58,6 @@ export async function GET(req) {
 
   const bookedTimes = booked.map((a) => a.time);
 
-  // Filter available
   const availableSlots = allSlots.filter(
     (t) => !bookedTimes.includes(t)
   );

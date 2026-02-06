@@ -26,7 +26,6 @@ export async function POST(req) {
       );
     }
 
-    // ✅ ROLE IS REQUIRED
   doctor.role = "doctor";
 const token = signJwt(doctor);
 

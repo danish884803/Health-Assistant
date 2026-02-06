@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/jwt";
 
 export function middleware(req) {
-  const token = req.cookies.get("token")?.value; // ✅ FIXED
+  const token = req.cookies.get("token")?.value; 
   const path = req.nextUrl.pathname;
 
   if (!token && path.startsWith("/dashboard")) {

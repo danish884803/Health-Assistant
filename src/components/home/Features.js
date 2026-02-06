@@ -3,7 +3,6 @@ export default function Features() {
     <section className="bg-white py-24">
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900">
             Our Departments
@@ -13,7 +12,6 @@ export default function Features() {
           </p>
         </div>
 
-        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <DepartmentCard
             icon="❤️"
@@ -51,7 +49,6 @@ export default function Features() {
   );
 }
 
-/* Card */
 function DepartmentCard({ icon, title, desc }) {
   return (
     <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition">

@@ -10,7 +10,6 @@ export default function HospitalInfo() {
           </h2>
         </div>
 
-        {/* Top cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
           <InfoCard
             icon="🕒"
@@ -38,7 +37,6 @@ export default function HospitalInfo() {
           />
         </div>
 
-        {/* Bottom cards */}
         <div className="flex flex-col md:flex-row justify-center gap-8">
           <SmallInfoCard
             icon="📅"
@@ -56,7 +54,6 @@ export default function HospitalInfo() {
   );
 }
 
-/* Large Card */
 function InfoCard({ icon, title, lines }) {
   return (
     <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition">
@@ -75,7 +72,6 @@ function InfoCard({ icon, title, lines }) {
   );
 }
 
-/* Small Card */
 function SmallInfoCard({ icon, title, desc }) {
   return (
     <div className="bg-white rounded-2xl px-10 py-6 shadow-sm border border-gray-100 flex items-center gap-5 min-w-[280px]">

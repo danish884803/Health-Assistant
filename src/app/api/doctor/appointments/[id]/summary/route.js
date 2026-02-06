@@ -41,22 +41,6 @@ export async function POST(req, { params }) {
       );
     }
 
-    // const appointment = await Appointment.findOneAndUpdate(
-    //   {
-    //     _id: new mongoose.Types.ObjectId(id),
-    //     doctorId: new mongoose.Types.ObjectId(doctor.id),
-    //   },
-    //   {
-    //     medicalSummary: {
-    //       diagnosis,
-    //       notes,
-    //       prescription,
-    //       followUpDate: followUpDate ? new Date(followUpDate) : null,
-    //       sentAt: new Date(),
-    //     },
-    //   },
-    //   { new: true }
-    // );
 const appointment = await Appointment.findOneAndUpdate(
   {
     _id: new mongoose.Types.ObjectId(id),
@@ -70,7 +54,7 @@ const appointment = await Appointment.findOneAndUpdate(
       followUpDate: followUpDate ? new Date(followUpDate) : null,
       sentAt: new Date(),
     },
-    status: "completed", // ✅ ADD THIS
+    status: "completed", 
   },
   { new: true }
 );
@@ -82,10 +66,8 @@ const appointment = await Appointment.findOneAndUpdate(
       );
     }
 
-    /* ✅ GENERATE PDF BUFFER */
     const pdfBuffer = await generateMedicalSummaryPDF(appointment);
 
-    /* ✅ SEND EMAIL WITH REAL PDF */
     await sendMedicalSummaryEmail({
       to: appointment.patientEmail,
       patientName: appointment.patientName,

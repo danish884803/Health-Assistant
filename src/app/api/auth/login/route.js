@@ -30,7 +30,6 @@ export async function POST(req) {
       );
     }
 
-    // ✅ JWT NOW CONTAINS patientId
     const token = signJwt(user);
 
     const res = NextResponse.json({
@@ -41,7 +40,7 @@ export async function POST(req) {
     res.cookies.set("token", token, {
       httpOnly: true,
       sameSite: "lax",
-      secure: false, // localhost
+      secure: false, 
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });

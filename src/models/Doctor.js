@@ -20,7 +20,6 @@ const DoctorSchema = new mongoose.Schema({
     slotDuration: Number,
   },
 
-  // ✅ future ready
   mfaEnabled: { type: Boolean, default: false },
 }, { timestamps: true });
 

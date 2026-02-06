@@ -7,14 +7,11 @@ import mongoose from "mongoose";
 import { logAudit } from "@/lib/audit";
 import { sendAppointmentRescheduledEmail } from "@/lib/mailer";
 import { sendAppointmentCancelledEmail } from "@/lib/mailer";
-/* =========================
-   UPDATE (RESCHEDULE)
-========================= */
+
 export async function PUT(req, context) {
   try {
     await connectDB();
 
-    // 🔥 FIX: params is async
     const { id } = await context.params;
 
     const body = await req.json();
@@ -86,14 +83,11 @@ await logAudit({
   }
 }
 
-/* =========================
-   DELETE (CANCEL)
-========================= */
+
 export async function DELETE(req, context) {
   try {
     await connectDB();
 
-    // 🔥 FIX: params is async
     const { id } = await context.params;
 
     const cookieStore = await cookies();

@@ -24,7 +24,6 @@ export default function PatientDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
 
-  // ✅ NEW: profile data
   const [profile, setProfile] = useState(null);
 
   const initials = useMemo(() => {
@@ -38,9 +37,7 @@ export default function PatientDashboard() {
       .toUpperCase();
   }, [user?.fullName]);
 
-  /* =========================
-     LOAD APPOINTMENTS
-  ========================= */
+  
   useEffect(() => {
     if (!user?.id) return;
 
@@ -64,9 +61,6 @@ export default function PatientDashboard() {
     loadAppointments();
   }, [user?.id]);
 
-  /* =========================
-     LOAD PROFILE (BLOOD TYPE)
-  ========================= */
   useEffect(() => {
     async function loadProfile() {
       try {

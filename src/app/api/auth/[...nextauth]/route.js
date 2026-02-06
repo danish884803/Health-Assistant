@@ -23,7 +23,6 @@ export const authOptions = {
 
         if (credentials.password !== user.password) return null;
 
-        // MFA check for Doctor/Admin
         let mfaVerified = false;
         if (["DOCTOR", "ADMIN"].includes(user.role)) {
           if (credentials.otp !== user.otp) return null;

@@ -4,9 +4,7 @@ import { verifyToken } from "@/lib/jwt";
 import { connectDB } from "@/lib/mongodb";
 import AiConfig from "@/models/AiConfig";
 
-/* =========================
-   GET CONFIG
-========================= */
+
 export async function GET() {
   await connectDB();
 
@@ -21,7 +19,6 @@ export async function GET() {
 
   let config = await AiConfig.findOne({ isActive: true });
 
-  // Auto-create default config if missing
   if (!config) {
     config = await AiConfig.create({
       name: "Hospital Assistant",
@@ -34,9 +31,6 @@ export async function GET() {
   return NextResponse.json({ config });
 }
 
-/* =========================
-   UPDATE CONFIG
-========================= */
 export async function PUT(req) {
   await connectDB();
 

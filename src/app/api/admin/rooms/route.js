@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 
-// 🔥 IMPORTANT: IMPORT BOTH MODELS
 import HospitalRoom from "@/models/HospitalRoom";
 import HospitalFloor from "@/models/HospitalFloor";
 

@@ -19,7 +19,6 @@ export default function RegisterPage() {
 
   const [step, setStep] = useState(1);
 
-  // ✅ REQUIRED STATES
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -77,10 +76,8 @@ export default function RegisterPage() {
           Back to Login
         </Link>
 
-        {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
 
-          {/* Header */}
           <div className="bg-gradient-to-r from-teal-500 to-emerald-400 p-6 text-center text-white">
             <div className="w-16 h-16 mx-auto rounded-2xl bg-white/20 flex items-center justify-center mb-4">
               <span className="font-bold text-2xl">SK</span>
@@ -91,18 +88,15 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Stepper */}
           <div className="flex items-center justify-center gap-4 py-4">
             <Step active={step === 1}>1</Step>
             <div className={`h-1 w-10 ${step === 2 ? 'bg-teal-500' : 'bg-gray-200'}`} />
             <Step active={step === 2}>2</Step>
           </div>
 
-          {/* Forms */}
           <div className="p-6">
             <AnimatePresence mode="wait">
 
-              {/* STEP 1 */}
               {step === 1 && (
                 <motion.div
                   key="step1"
@@ -126,7 +120,6 @@ export default function RegisterPage() {
                 </motion.div>
               )}
 
-              {/* STEP 2 */}
               {step === 2 && (
                 <motion.div
                   key="step2"
@@ -165,7 +158,6 @@ export default function RegisterPage() {
   );
 }
 
-/* ---------- SMALL HELPERS ---------- */
 function Step({ active, children }) {
   return (
     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold

@@ -48,7 +48,6 @@ async function loadRooms() {
     loadFloors();
   }, [user]);
 
-  /* ================= ACTIONS ================= */
   async function addRoom() {
     if (!form.name || !form.floorId || !form.gridArea) {
       alert('Fill all fields');
@@ -91,7 +90,6 @@ async function loadRooms() {
           Hospital <span className="text-teal-600">Rooms</span>
         </h1>
 
-        {/* ================= ADD ROOM ================= */}
         <div className="bg-white border rounded-3xl p-6 space-y-4">
           <h3 className="font-bold text-lg">Add New Room</h3>
 

@@ -1,4 +1,4 @@
-export const runtime = "nodejs"; // 🔥 CRITICAL
+export const runtime = "nodejs"; 
 
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import fs from "fs";

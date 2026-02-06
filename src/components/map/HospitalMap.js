@@ -398,18 +398,14 @@ import {
   MapPin,
 } from "lucide-react";
 
-/* =========================
-   ICON MAPPING
-========================= */
+
 const ICONS = {
   department: Heart,
   service: Building2,
   facility: Coffee,
 };
 
-/* =========================
-   MAP CONTENT
-========================= */
+
 function MapContent() {
   const [floors, setFloors] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -419,14 +415,10 @@ function MapContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // 🔑 Can be roomId (old dashboard) OR roomCode (chatbot)
   const roomParam = searchParams.get("room");
   const from = searchParams.get("from");
   const backPath = from === "dashboard" ? "/dashboard/patient" : "/";
 
-  /* =========================
-     LOAD MAP DATA
-  ========================= */
   useEffect(() => {
     async function loadMapData() {
       try {
@@ -439,15 +431,11 @@ function MapContent() {
         setFloors(allFloors);
         setRooms(allRooms);
 
-        /* ✅ UNIVERSAL ROOM RESOLUTION
-           - supports roomId (old)
-           - supports roomCode (AI/chatbot)
-        */
         if (roomParam) {
           const matchedRoom = allRooms.find(
             r =>
-              r._id === roomParam ||        // old dashboard
-              r.roomCode === roomParam      // chatbot / AI
+              r._id === roomParam ||        
+              r.roomCode === roomParam      
           );
 
           if (matchedRoom) {
@@ -462,7 +450,6 @@ function MapContent() {
           }
         }
 
-        // Default → first floor
         if (allFloors.length > 0) {
           setSelectedFloor(allFloors[0]._id);
         }
@@ -474,9 +461,6 @@ function MapContent() {
     loadMapData();
   }, [roomParam]);
 
-  /* =========================
-     DERIVED DATA
-  ========================= */
   const currentFloor = floors.find(f => f._id === selectedFloor);
 
   const floorRooms = rooms.filter(r => {
@@ -503,13 +487,10 @@ function MapContent() {
     }
   };
 
-  /* =========================
-     UI
-  ========================= */
   return (
     <section className="max-w-7xl mx-auto px-6 py-20">
 
-      {/* BACK */}
+    
       <button
         onClick={() => router.push(backPath)}
         className="text-sm text-gray-500 hover:text-gray-800 mb-4"
@@ -519,7 +500,7 @@ function MapContent() {
 
       <h1 className="text-3xl font-bold mb-6">Hospital Map Explorer</h1>
 
-      {/* FLOORS */}
+      
       <div className="flex gap-3 mb-8 overflow-x-auto">
         {floors.map(f => (
           <button
@@ -609,9 +590,7 @@ function MapContent() {
   );
 }
 
-/* =========================
-   EXPORT (Suspense)
-========================= */
+
 export default function HospitalMap() {
   return (
     <Suspense fallback={<div className="p-20 text-center">Loading map…</div>}>

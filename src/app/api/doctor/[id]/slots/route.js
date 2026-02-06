@@ -4,9 +4,7 @@ import Doctor from "@/models/Doctor";
 import Appointment from "@/models/Appointment";
 import mongoose from "mongoose";
 
-/* =========================
-   SLOT GENERATOR
-========================= */
+
 function generateSlots(start, end, duration) {
   const slots = [];
   const [sh, sm] = start.split(":").map(Number);
@@ -25,14 +23,11 @@ function generateSlots(start, end, duration) {
   return slots;
 }
 
-/* =========================
-   GET AVAILABLE SLOTS
-========================= */
+
 export async function GET(req, context) {
   try {
     await connectDB();
 
-    // ✅ FIX — params IS ASYNC
     const { id } = await context.params;
 
     const { searchParams } = new URL(req.url);
@@ -42,7 +37,6 @@ export async function GET(req, context) {
       return NextResponse.json({ slots: [] });
     }
 
-    // ✅ Normalize date (CRITICAL)
     const date = new Date(`${dateStr}T00:00:00`);
 
     const doctor = await Doctor.findById(id);

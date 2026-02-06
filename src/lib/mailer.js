@@ -8,9 +8,7 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-/* =========================
-   EMAIL OTP
-========================= */
+
 export async function sendEmailOtp(email, otp) {
   await transporter.sendMail({
     from: `"Hospital Help" <${process.env.EMAIL_USER}>`,
@@ -27,9 +25,7 @@ export async function sendEmailOtp(email, otp) {
   });
 }
 
-/* =========================
-   APPOINTMENT BOOKED
-========================= */
+
 export async function sendAppointmentEmail({
   to,
   doctorName,
@@ -54,9 +50,7 @@ export async function sendAppointmentEmail({
   });
 }
 
-/* =========================
-   APPOINTMENT RESCHEDULED
-========================= */
+
 export async function sendAppointmentRescheduledEmail({
   to,
   doctorName,
@@ -81,9 +75,7 @@ export async function sendAppointmentRescheduledEmail({
   });
 }
 
-/* =========================
-   APPOINTMENT CANCELLED
-========================= */
+
 export async function sendAppointmentCancelledEmail({
   to,
   doctorName,
@@ -123,28 +115,6 @@ export async function sendDoctorSummaryEmail({
 }
 
 
-// export async function sendMedicalSummaryEmail({
-//   to,
-//   patientName,
-//   pdfBuffer,
-// }) {
-//   await transporter.sendMail({
-//     from: `"Sheikh Khalifa Hospital" <${process.env.EMAIL_USER}>`,
-//     to,
-//     subject: "Your Medical Summary",
-//     html: `
-//       <p>Dear ${patientName},</p>
-//       <p>Your medical summary is attached as a PDF.</p>
-//       <p>Regards,<br/>Sheikh Khalifa Hospital</p>
-//     `,
-//     attachments: [
-//       {
-//         filename: "medical-summary.pdf",
-//         content: pdfBuffer,
-//       },
-//     ],
-//   });
-// }
 export async function sendMedicalSummaryEmail({
   to,
   patientName,

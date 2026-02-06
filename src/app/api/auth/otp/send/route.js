@@ -19,10 +19,10 @@ export async function POST(req) {
   const otp = generateOTP();
 
   user.otpCode = otp;
-  user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+  user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
   await user.save();
 
-  console.log("OTP (dev only):", otp); // later integrate email/SMS
+  console.log("OTP (dev only):", otp); 
 
   return NextResponse.json({ success: true });
 }

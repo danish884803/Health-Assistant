@@ -5,7 +5,6 @@ import User from "@/models/User";
 import { generateEmailOtp } from "@/lib/emailOtp";
 import { sendEmailOtp } from "@/lib/mailer";
 
-/* 🔐 Generate Patient ID */
 function generatePatientId() {
   const year = new Date().getFullYear();
   const random = Math.floor(100000 + Math.random() * 900000);
@@ -52,7 +51,6 @@ export async function POST(req) {
       role: "patient",
     });
 
-    // 📧 Send OTP
     await sendEmailOtp(email, otp);
 
     return NextResponse.json({ success: true });

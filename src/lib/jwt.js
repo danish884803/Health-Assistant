@@ -19,7 +19,7 @@ export function signJwt(user) {
   }
 
   if (user.role === "admin") {
-    payload.fullName = user.fullName; // ✅ REQUIRED
+    payload.fullName = user.fullName; 
   }
 
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });

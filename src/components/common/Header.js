@@ -21,7 +21,6 @@ export default function Header() {
   const displayName = user?.fullName || user?.name || 'User';
   const initial = displayName.charAt(0).toUpperCase();
 
-  // Determine Dashboard Link based on role
   const dashboardHref = isAdmin 
     ? '/dashboard/admin' 
     : isDoctor 
@@ -57,14 +56,12 @@ export default function Header() {
           <Link href="/services" className="hover:text-teal-600">Services</Link>
           <Link href="/map" className="hover:text-teal-600">Hospital Map</Link>
 
-          {/* ✅ Contact ONLY for Guest */}
           {isGuest && (
             <Link href="/contact" className="hover:text-teal-600">
               Contact
             </Link>
           )}
 
-          {/* ✅ Dashboard Link for ANY Logged-in User */}
           {!isGuest && (
             <Link
               href={dashboardHref}
@@ -124,7 +121,6 @@ export default function Header() {
             </>
           )}
 
-          {/* ✅ CTA — ONLY PATIENT */}
           {isPatient && (
             <Link
               href="/appointments/book"

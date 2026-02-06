@@ -64,7 +64,6 @@ export default function ServicesPage() {
       <main className="pt-28 pb-20">
         <div className="max-w-7xl mx-auto px-6">
 
-          {/* ===== HERO ===== */}
           <div className="text-center mb-16">
             <h1 className="text-4xl font-extrabold text-gray-900">
               Our <span className="text-teal-600">Medical Services</span>
@@ -75,7 +74,6 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          {/* ===== SERVICES GRID ===== */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((s, i) => {
               const Icon = s.icon;
@@ -98,7 +96,6 @@ export default function ServicesPage() {
             })}
           </div>
 
-          {/* ===== CTA ===== */}
           <div className="mt-20 text-center bg-gradient-to-r from-teal-500 to-emerald-400 rounded-3xl p-10 text-white">
             <h2 className="text-2xl font-extrabold mb-3">
               Need medical assistance?

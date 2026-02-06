@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const HospitalFloorSchema = new mongoose.Schema({
-  name: String,        // Ground Floor, First Floor
-  level: Number        // 0,1,2
+  name: String,        
+  level: Number        
 });
 
 export default mongoose.models.HospitalFloor ||

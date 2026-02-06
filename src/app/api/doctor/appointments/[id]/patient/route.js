@@ -22,7 +22,6 @@ export async function GET(req, { params }) {
 
     const { id } = await params;
 
-    // Validate if ID is a valid MongoDB ObjectId to avoid 500 errors
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid Appointment ID" }, { status: 400 });
     }

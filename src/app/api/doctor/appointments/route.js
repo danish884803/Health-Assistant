@@ -25,7 +25,6 @@ export async function GET() {
 
     const now = new Date();
 
-    // 🔥 NORMALIZE STATUS (REAL HOSPITAL LOGIC)
     const normalized = appointments.map((a) => {
       const appointmentTime = new Date(a.date);
       if (a.time) {
@@ -35,7 +34,6 @@ export async function GET() {
 
       let status = a.status || "booked";
 
-      // ✅ COMPLETED: summary exists OR time passed
       if (
         status !== "cancelled" &&
         (a.medicalSummary?.sentAt || appointmentTime < now)
@@ -49,7 +47,6 @@ export async function GET() {
       };
     });
 
-    // 🧾 AUDIT
     await logAudit({
       actorId: doctor.id,
       actorModel: "Doctor",

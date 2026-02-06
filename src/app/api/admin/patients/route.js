@@ -5,14 +5,11 @@ import { verifyToken } from "@/lib/jwt";
 import User from "@/models/User";
 import AuditLog from "@/models/AuditLog";
 
-/* =========================
-   GET — LIST PATIENTS
-========================= */
+
 export async function GET() {
   try {
     await connectDB();
 
-    // ✅ NEXT.JS 16 FIX
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -46,14 +43,10 @@ export async function GET() {
   }
 }
 
-/* =========================
-   PUT — UPDATE PATIENT (NON-MEDICAL)
-========================= */
 export async function PUT(req) {
   try {
     await connectDB();
 
-    // ✅ NEXT.JS 16 FIX
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -88,7 +81,6 @@ export async function PUT(req) {
       );
     }
 
-    // 🧾 AUDIT LOG
     await AuditLog.create({
       actorId: admin.id,
       actorModel: "Admin",
@@ -107,9 +99,7 @@ export async function PUT(req) {
     );
   }
 }
-/* =========================
-   DELETE — REMOVE PATIENT
-========================= */
+
 export async function DELETE(req) {
   try {
     await connectDB();

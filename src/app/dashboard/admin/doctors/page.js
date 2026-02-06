@@ -330,7 +330,6 @@ export default function AdminDoctorsPage() {
     },
   });
 
-  /* LOAD */
   useEffect(() => {
     if (!user || user.role !== 'admin') return;
     loadDoctors();

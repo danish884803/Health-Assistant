@@ -6,9 +6,7 @@ import { verifyToken } from "@/lib/jwt";
 import { sendAppointmentEmail } from "@/lib/mailer";
 import mongoose from "mongoose";
 
-/* =========================
-   CREATE APPOINTMENT
-========================= */
+
 export async function POST(req) {
   try {
     await connectDB();
@@ -26,19 +24,17 @@ export async function POST(req) {
     const appointment = await Appointment.create({
       userId: new mongoose.Types.ObjectId(user.id),
 
-      // PATIENT
       patientId: user.patientId,
       patientName: user.fullName,
       patientEmail: user.email,
 
-      // DOCTOR
       doctorId: new mongoose.Types.ObjectId(body.doctorId),
       doctorName: body.doctorName,
       department: body.department,
       clinic: body.clinic,
 
-      // 🔥 ROOM FIX
-      room: body.room, // display (e.g. 302)
+
+      room: body.room, 
       roomId: body.roomId ? new mongoose.Types.ObjectId(body.roomId) : null,
 
       date: new Date(body.date),
@@ -46,7 +42,6 @@ export async function POST(req) {
       status: "booked",
     });
 
-    // EMAIL
     try {
       await sendAppointmentEmail({
         to: user.email,
@@ -67,9 +62,6 @@ export async function POST(req) {
   }
 }
 
-/* =========================
-   GET PATIENT APPOINTMENTS
-========================= */
 export async function GET() {
   try {
     await connectDB();

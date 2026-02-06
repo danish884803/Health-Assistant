@@ -20,7 +20,7 @@ const AuditLogSchema = new mongoose.Schema(
     },
 
     targetType: {
-      type: String, // patient | appointment | report
+      type: String, 
       required: true,
     },
 

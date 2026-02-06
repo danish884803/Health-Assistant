@@ -6,9 +6,7 @@ import Doctor from "@/models/Doctor";
 import AuditLog from "@/models/AuditLog";
 import bcrypt from "bcryptjs";
 
-/* =========================
-   AUTH HELPER
-========================= */
+
 async function requireAdmin() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
@@ -20,9 +18,7 @@ async function requireAdmin() {
   return admin;
 }
 
-/* =========================
-   GET — LIST DOCTORS
-========================= */
+
 export async function GET() {
   try {
     await connectDB();
@@ -35,9 +31,7 @@ export async function GET() {
   }
 }
 
-/* =========================
-   POST — ADD DOCTOR
-========================= */
+
 export async function POST(req) {
   try {
     await connectDB();
@@ -50,7 +44,7 @@ export async function POST(req) {
       department,
       clinic,
       room,
-      roomId,          // ✅ Destructured correctly
+      roomId,          
       availability,
     } = await req.json();
 
@@ -69,8 +63,8 @@ export async function POST(req) {
       passwordHash,
       department,
       clinic,
-      room,            // Display string
-      roomId,          // ✅ Map navigation reference
+      room,            
+      roomId,          
       availability,
     });
 
@@ -89,9 +83,6 @@ export async function POST(req) {
   }
 }
 
-/* =========================
-   PUT — UPDATE DOCTOR
-========================= */
 export async function PUT(req) {
   try {
     await connectDB();
@@ -105,7 +96,7 @@ export async function PUT(req) {
       department,
       clinic,
       room,
-      roomId,          // ✅ Added roomId to destructuring
+      roomId,          
       availability,
     } = await req.json();
 
@@ -115,11 +106,10 @@ export async function PUT(req) {
       department,
       clinic,
       room,
-      roomId,          // ✅ Added roomId to update object
+      roomId,         
       availability,
     };
 
-    // 🔐 Only hash password if provided
     if (password && password.trim() !== "") {
       updateData.passwordHash = await bcrypt.hash(password, 10);
     }
@@ -149,9 +139,7 @@ export async function PUT(req) {
   }
 }
 
-/* =========================
-   DELETE — REMOVE DOCTOR
-========================= */
+
 export async function DELETE(req) {
   try {
     await connectDB();

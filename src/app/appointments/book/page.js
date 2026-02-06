@@ -13,17 +13,14 @@ export default function BookAppointmentPage() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
 
-  // ✅ NEW
   const [slotBooked, setSlotBooked] = useState(false);
 
-  /* LOAD DEPARTMENTS */
   useEffect(() => {
     fetch('/api/departments')
       .then(res => res.json())
       .then(data => setDepartments(data.departments || []));
   }, []);
 
-  /* LOAD DOCTORS */
   useEffect(() => {
     if (!department) return;
 
@@ -32,7 +29,6 @@ export default function BookAppointmentPage() {
       .then(data => setDoctors(data.doctors || []));
   }, [department]);
 
-  /* ✅ CHECK SLOT AVAILABILITY */
   useEffect(() => {
     if (!doctor || !date || !time) {
       setSlotBooked(false);
@@ -68,9 +64,8 @@ export default function BookAppointmentPage() {
   department: doctor.department,
   clinic: doctor.clinic,
 
-  room: doctor.room,        // display
+  room: doctor.room,        
   roomId: doctor.roomId?._id,
-  // ✅ ADD THIS
 
   date,
   time,
@@ -142,7 +137,7 @@ export default function BookAppointmentPage() {
             onChange={(e) => setTime(e.target.value)}
           />
 
-          {/* ✅ SLOT WARNING */}
+          {/*  SLOT WARNING */}
           {slotBooked && (
             <p className="text-sm text-red-600 font-semibold">
               ❌ This slot is already booked. Please choose another time.

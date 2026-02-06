@@ -92,7 +92,6 @@ const modules = [
       <main className="pt-28 pb-20">
         <div className="max-w-7xl mx-auto px-6 space-y-12">
 
-          {/* ===== HEADER ===== */}
           <div className="flex flex-wrap items-center justify-between gap-6">
             <div>
               <h1 className="text-3xl font-extrabold text-gray-900">

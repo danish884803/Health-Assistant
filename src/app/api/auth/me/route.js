@@ -19,10 +19,8 @@ export async function GET() {
         id: decoded.id,
         email: decoded.email,
         role: decoded.role,
-
-        // ✅ ROLE-SPECIFIC FIELDS
-        name: decoded.name || null,          // doctor
-        fullName: decoded.fullName || null,  // patient
+        name: decoded.name || null,          
+        fullName: decoded.fullName || null,  
         patientId: decoded.patientId || null,
       },
     });

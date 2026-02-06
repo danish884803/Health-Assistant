@@ -65,7 +65,6 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // 🔥 THIS IS THE FIX
     await reloadUser();
 
     const role = userType === 'doctor' ? 'doctor' : data.role;

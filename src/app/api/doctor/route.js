@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Doctor from "@/models/Doctor";
-import HospitalRoom from "@/models/HospitalRoom"; // ✅ REQUIRED FOR populate
+import HospitalRoom from "@/models/HospitalRoom"; 
 
 export async function GET(req) {
   try {

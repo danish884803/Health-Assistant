@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
 const HospitalRoomSchema = new mongoose.Schema({
-  name: String,               // Cardiology
-  roomCode: String,           // 302
+  name: String,               
+  roomCode: String,         
   type: {
     type: String,
     enum: ["department", "service", "facility"]
   },
-  icon: String,               // "Heart", "Stethoscope"
-  gridArea: String,           // "1 / 1 / 2 / 3"
+  icon: String,              
+  gridArea: String,          
   floorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "HospitalFloor"
