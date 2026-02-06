@@ -1,9 +1,23 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { verifyToken } from "@/lib/jwt";
 
 export default function PatientLayout({ children }) {
-  const token = cookies().get("token")?.value;
+  const cookieHeader = headers().get("cookie");
+
+  if (!cookieHeader) {
+    redirect("/login");
+  }
+
+  // Extract token manually
+  const token = cookieHeader
+    .split("; ")
+    .find((row) => row.startsWith("token="))
+    ?.split("=")[1];
+
+  if (!token) {
+    redirect("/login");
+  }
 
   let user;
   try {
