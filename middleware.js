@@ -40,11 +40,11 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/jwt";
 
 export function middleware(req) {
-  // ✅ Correct way in middleware (Edge runtime)
+  // ✅ ONLY correct way in middleware
   const token = req.cookies.get("token")?.value;
   const path = req.nextUrl.pathname;
 
-  // Block unauthenticated access
+  // Not logged in → redirect
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
@@ -52,7 +52,7 @@ export function middleware(req) {
   try {
     const user = verifyToken(token);
 
-    // Role-based protection
+    // Role protection
     if (path.startsWith("/dashboard/admin") && user.role !== "admin") {
       return NextResponse.redirect(new URL("/", req.url));
     }
@@ -64,8 +64,7 @@ export function middleware(req) {
     if (path.startsWith("/dashboard/patient") && user.role !== "patient") {
       return NextResponse.redirect(new URL("/", req.url));
     }
-  } catch (err) {
-    // Invalid / expired token
+  } catch {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
