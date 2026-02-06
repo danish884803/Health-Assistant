@@ -90,14 +90,23 @@ export async function POST(req) {
     });
 
     // ✅ FIXED COOKIE FOR VERCEL (HTTPS)
-    res.cookies.set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
+    // res.cookies.set("token", token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "none",
+    //   path: "/",
+    //   maxAge: 60 * 60 * 24 * 7, // 7 days
+    // });
+const hostname = new URL(process.env.NEXT_PUBLIC_SITE_URL).hostname;
 
+res.cookies.set("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+  domain: hostname,        // 🔑 THIS IS THE MISSING PIECE
+  maxAge: 60 * 60 * 24 * 7,
+});
     return res;
   } catch (e) {
     console.error("LOGIN ERROR:", e);
