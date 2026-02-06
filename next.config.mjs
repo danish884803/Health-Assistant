@@ -4,6 +4,9 @@
 // export default nextConfig;
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable Turbopack configuration (required for Next.js 16+)
+  turbopack: {},
+  
   // Disable static optimization for API routes to prevent export mismatch
   experimental: {
     serverActions: {
@@ -11,14 +14,6 @@ const nextConfig = {
     },
   },
   
-  // Ensure proper module resolution
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals = [...(config.externals || []), 'mongodb'];
-    }
-    return config;
-  },
-
   // Environment variables that should be available at build time
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
