@@ -38,13 +38,13 @@
 // };
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/jwt";
-import { cookies } from "next/headers";
 
 export function middleware(req) {
-  const token = cookies().get("token")?.value;
+  // ✅ Correct way in middleware (Edge runtime)
+  const token = req.cookies.get("token")?.value;
   const path = req.nextUrl.pathname;
 
-  // Not logged in → block all dashboard routes
+  // Block unauthenticated access
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
