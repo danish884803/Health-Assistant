@@ -40,7 +40,7 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/jwt";
 
 export function middleware(req) {
-  // ✅ ONLY correct way in middleware
+  // ✅ ONLY valid cookie access in middleware
   const token = req.cookies.get("token")?.value;
   const path = req.nextUrl.pathname;
 
@@ -52,7 +52,6 @@ export function middleware(req) {
   try {
     const user = verifyToken(token);
 
-    // Role protection
     if (path.startsWith("/dashboard/admin") && user.role !== "admin") {
       return NextResponse.redirect(new URL("/", req.url));
     }
