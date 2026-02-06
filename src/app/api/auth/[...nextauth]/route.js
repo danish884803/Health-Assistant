@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import clientPromise from "@/lib/mongodb";
-
+import { connectDB } from "@/lib/mongodb";
 export const authOptions = {
   providers: [
     CredentialsProvider({
@@ -12,7 +11,7 @@ export const authOptions = {
         otp: {}
       },
       async authorize(credentials) {
-        const client = await clientPromise;
+        const client = await connectDB();
         const db = client.db("skgh_db");
 
         const user = await db.collection("users").findOne({

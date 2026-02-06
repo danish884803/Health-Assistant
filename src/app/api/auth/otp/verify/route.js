@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import { signToken } from "@/lib/jwt";
-
+import { signJwt } from "@/lib/jwt";
 export async function POST(req) {
   const { emailOrId, otp } = await req.json();
   await connectDB();
@@ -21,7 +20,7 @@ export async function POST(req) {
   user.lastLogin = new Date();
   await user.save();
 
-  const token = signToken({
+  const token = signJwt({
     id: user._id,
     role: user.role,
     email: user.email,
