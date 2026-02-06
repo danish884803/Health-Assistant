@@ -65,16 +65,10 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // await reloadUser();
-
-    // const role = userType === 'doctor' ? 'doctor' : data.role;
-    // router.push(`/dashboard/${role}`);
     await reloadUser();
 
-const role = userType === 'doctor' ? 'doctor' : data.role;
-
-// 🔑 force full navigation so middleware can read the cookie
-window.location.href = `/dashboard/${role}`;
+    const role = userType === 'doctor' ? 'doctor' : data.role;
+    router.push(`/dashboard/${role}`);
 
   } catch (err) {
     setError('Something went wrong. Try again.');
