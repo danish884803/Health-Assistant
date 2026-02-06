@@ -34,7 +34,10 @@ export async function POST(req) {
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-    const otp = generateEmailOtp();
+
+    // 🔑 FIX: force OTP to string
+    const otp = generateEmailOtp().toString();
+
     const patientId = generatePatientId();
 
     await User.create({
@@ -46,7 +49,7 @@ export async function POST(req) {
       emiratesId,
       dob,
       emailOtp: otp,
-      emailOtpExpiry: new Date(Date.now() + 10 * 60 * 1000),
+      emailOtpExpiry: new Date(Date.now() + 10 * 60 * 1000), // 10 min
       emailVerified: false,
       role: "patient",
     });

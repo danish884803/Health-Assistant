@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
@@ -7,16 +8,21 @@ export async function POST(req) {
   try {
     const { email, otp } = await req.json();
 
+    const normalizedOtp = otp.toString().trim();
+
     await connectDB();
 
     const user = await User.findOne({
       email,
-      emailOtp: otp,
+      emailOtp: normalizedOtp,
       emailOtpExpiry: { $gt: new Date() },
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid or expired OTP" },
+        { status: 400 }
+      );
     }
 
     user.emailVerified = true;
@@ -24,18 +30,25 @@ export async function POST(req) {
     user.emailOtpExpiry = null;
     await user.save();
 
-    const token = signJwt(user);
+    const freshUser = await User.findById(user._id);
+    const token = signJwt(freshUser);
 
     const res = NextResponse.json({ success: true });
-    res.cookies.set("auth_token", token, {
+
+    res.cookies.set("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return res;
   } catch (e) {
-    return NextResponse.json({ error: "Verification failed" }, { status: 500 });
+    console.error("VERIFY EMAIL ERROR:", e);
+    return NextResponse.json(
+      { error: "Verification failed" },
+      { status: 500 }
+    );
   }
 }

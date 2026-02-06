@@ -48,43 +48,65 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext"; // ✅ ADD THIS
 
 function VerifyEmailContent() {
   const router = useRouter();
   const params = useSearchParams();
+  const { reloadUser } = useAuth(); // ✅ ADD THIS
+
   const email = params.get("email");
 
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const verify = async () => {
+    setLoading(true);
+    setError("");
+
     const res = await fetch("/api/auth/verify-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include", // 🔑 REQUIRED
       body: JSON.stringify({ email, otp }),
     });
 
-    if (res.ok) {
-      router.push("/dashboard/patient");
-    } else {
-      const data = await res.json();
-      setError(data.error);
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || "Verification failed");
+      setLoading(false);
+      return;
     }
+
+    // 🔑 THIS FIXES THE REFRESH ISSUE
+    await reloadUser();
+
+    // Navigate after auth state is ready
+    router.push("/dashboard/patient");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-6 rounded-xl shadow w-96">
         <h1 className="text-xl font-bold mb-4">Verify Email</h1>
+
         <input
           value={otp}
           onChange={e => setOtp(e.target.value)}
           placeholder="Enter 6 digit OTP"
           className="w-full border p-3 rounded mb-3"
         />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button onClick={verify} className="w-full bg-teal-500 text-white p-3 rounded">
-          Verify & Continue
+
+        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+        <button
+          onClick={verify}
+          disabled={loading}
+          className="w-full bg-teal-500 text-white p-3 rounded"
+        >
+          {loading ? "Verifying..." : "Verify & Continue"}
         </button>
       </div>
     </div>
@@ -93,17 +115,19 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-white p-6 rounded-xl shadow w-96">
-          <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
-            <div className="h-12 bg-gray-200 rounded mb-3"></div>
-            <div className="h-12 bg-gray-200 rounded"></div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl shadow w-96">
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+              <div className="h-12 bg-gray-200 rounded mb-3"></div>
+              <div className="h-12 bg-gray-200 rounded"></div>
+            </div>
           </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <VerifyEmailContent />
     </Suspense>
   );

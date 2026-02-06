@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-
+import { ArrowLeft } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 export default function BookAppointmentPage() {
   const [departments, setDepartments] = useState([]);
+  const router = useRouter();
   const [doctors, setDoctors] = useState([]);
 
   const [department, setDepartment] = useState('');
@@ -79,9 +81,19 @@ export default function BookAppointmentPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+       
+      
       <Header />
+      
 
       <main className="pt-28 pb-20 max-w-xl mx-auto px-6">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-teal-600 mb-6 transition-colors"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          Back to Dashboard
+        </button>
         <div className="bg-white rounded-3xl border p-8 space-y-5">
           <h1 className="text-2xl font-bold">Book Appointment</h1>
 

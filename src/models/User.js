@@ -27,10 +27,17 @@ const UserSchema = new mongoose.Schema(
       enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
     },
 
-    heightCm: Number, 
+    heightCm: Number,
     weightKg: Number,
 
     emailVerified: { type: Boolean, default: false },
+
+    emailOtp: {
+      type: String,
+    },
+    emailOtpExpiry: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

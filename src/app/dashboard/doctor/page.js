@@ -242,7 +242,7 @@ export default function DoctorDashboard() {
             </div>
 
             {/* RIGHT — SCHEDULE SIDEBAR */}
-            <div className="lg:col-span-1">
+            {/* <div className="lg:col-span-1">
               <div className="bg-white rounded-3xl border p-8 sticky top-28 shadow-sm">
                 <h3 className="text-xl font-bold mb-4 text-gray-900">My Schedule</h3>
 
@@ -260,7 +260,7 @@ export default function DoctorDashboard() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
           </div>
         </div>
