@@ -12,7 +12,7 @@ export default function PatientLayout({ children }) {
     redirect("/login");
   }
 
- if (user.role !== "admin") redirect("/");
+if (user.role !== "admin") redirect("/");
 
   return children;
 }
