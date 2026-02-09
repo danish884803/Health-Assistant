@@ -50,7 +50,7 @@ const HospitalRoomSchema = new mongoose.Schema({
       pediatrics: [String],
       gynecology: [String],
       dermatology: [String],
-      dentalclinic: [String],
+      dental: [String],
       orthopedics: [String],
       cardiology: [String],
       neurology: [String],
