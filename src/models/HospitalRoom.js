@@ -47,13 +47,14 @@ const HospitalRoomSchema = new mongoose.Schema({
       parking: [String],
       emergency: [String],
       laboratory: [String],
-
-      // ✅ ADD THESE
       pediatrics: [String],
       gynecology: [String],
       dermatology: [String],
       dentalclinic: [String],
-      orthopedics: [String]
+      orthopedics: [String],
+      cardiology: [String],
+      neurology: [String],
+
     },
   },
 });
