@@ -10,37 +10,30 @@ import { generateMedicalSummaryPDF } from "@/lib/pdfGenerator";
 export async function POST(req, { params }) {
   try {
     await connectDB();
-
     const { id } = await params;
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { error: "Invalid appointment ID" },
         { status: 400 }
       );
     }
-
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const doctor = verifyToken(token);
     if (doctor.role !== "doctor") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
     const body = await req.json();
     const { diagnosis, notes, prescription, followUpDate } = body;
-
     if (!diagnosis || !notes) {
       return NextResponse.json(
         { error: "Diagnosis and notes are required" },
         { status: 400 }
       );
     }
-
 const appointment = await Appointment.findOneAndUpdate(
   {
     _id: new mongoose.Types.ObjectId(id),
@@ -58,7 +51,6 @@ const appointment = await Appointment.findOneAndUpdate(
   },
   { new: true }
 );
-
     if (!appointment) {
       return NextResponse.json(
         { error: "Appointment not found" },

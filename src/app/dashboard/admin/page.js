@@ -19,10 +19,8 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
-
   if (loading) return null;
   if (!user || user.role !== 'admin') return null;
-
   const stats = [
     {
       label: 'Total Patients',
@@ -45,7 +43,6 @@ export default function AdminDashboard() {
       icon: <Activity size={22} />,
     },
   ];
-
 const modules = [
   {
     title: 'Patient Management',

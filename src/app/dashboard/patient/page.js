@@ -20,12 +20,9 @@ import Chatbot from '@/components/chat/Chatbot';
 export default function PatientDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
-
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
-
   const [profile, setProfile] = useState(null);
-
   const initials = useMemo(() => {
     if (!user?.fullName) return 'U';
     return user.fullName
@@ -36,17 +33,13 @@ export default function PatientDashboard() {
       .join('')
       .toUpperCase();
   }, [user?.fullName]);
-
-  
   useEffect(() => {
     if (!user?.id) return;
-
     async function loadAppointments() {
       try {
         const res = await fetch('/api/appointments', {
           credentials: 'include',
         });
-
         if (res.ok) {
           const data = await res.json();
           setAppointments(data.appointments || []);
@@ -57,19 +50,15 @@ export default function PatientDashboard() {
         setLoadingAppointments(false);
       }
     }
-
     loadAppointments();
   }, [user?.id]);
-
   useEffect(() => {
     async function loadProfile() {
       try {
         const res = await fetch('/api/profile', {
           credentials: 'include',
         });
-
         if (!res.ok) return;
-
         const data = await res.json();
         setProfile(data.user);
       } catch {

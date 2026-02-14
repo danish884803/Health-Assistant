@@ -18,7 +18,6 @@ export default function AdminChatbotPage() {
       .then(res => res.json())
       .then(data => setConfig(data.config));
   }, [user]);
-
   if (loading) return null;
   if (!user || user.role !== 'admin') return null;
   if (!config) return null;
@@ -38,10 +37,8 @@ export default function AdminChatbotPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
-
       <main className="pt-28 pb-20">
         <div className="max-w-5xl mx-auto px-6 space-y-8">
-
           {/* HEADER */}
           <div>
             <h1 className="text-3xl font-extrabold text-gray-900">

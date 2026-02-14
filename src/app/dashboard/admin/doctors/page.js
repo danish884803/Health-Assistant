@@ -313,7 +313,6 @@ export default function AdminDoctorsPage() {
   const [rooms, setRooms] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState(null);
-
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -329,7 +328,6 @@ export default function AdminDoctorsPage() {
       slotDuration: 15,
     },
   });
-
   useEffect(() => {
     if (!user || user.role !== 'admin') return;
     loadDoctors();
@@ -341,13 +339,11 @@ export default function AdminDoctorsPage() {
     const data = await res.json();
     setDoctors(data.doctors || []);
   }
-
   async function loadRooms() {
     const res = await fetch('/api/admin/rooms', { credentials: 'include' });
     const data = await res.json();
     setRooms(data.rooms || []);
   }
-
   function openAdd() {
     setEditingDoctor(null);
     setForm({

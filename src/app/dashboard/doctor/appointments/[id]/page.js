@@ -12,20 +12,16 @@ export default function DoctorPatientView() {
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     async function loadPatient() {
       try {
         const res = await fetch(`/api/doctor/appointments/${id}/patient`, {
           credentials: "include",
         });
-
         const data = await res.json();
-
         if (!res.ok) {
           throw new Error(data.error || "Failed to load patient");
         }
-        
         setPatient(data.patient);
       } catch (err) {
         setError(err.message);
@@ -35,19 +31,16 @@ export default function DoctorPatientView() {
     }
     if (id) loadPatient();
   }, [id]);
-
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
-      <main className="pt-28 pb-20 max-w-4xl mx-auto px-6">
-        
+      <main className="pt-28 pb-20 max-w-4xl mx-auto px-6">   
         <button 
           onClick={() => router.back()}
           className="flex items-center gap-2 text-gray-500 hover:text-teal-600 mb-6 transition-colors"
         >
           <ArrowLeft size={18} /> Back to Dashboard
         </button>
-
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="animate-spin text-teal-600" size={40} /></div>
         ) : error ? (

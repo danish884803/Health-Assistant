@@ -5,8 +5,6 @@ import { verifyToken } from "@/lib/jwt";
 import Doctor from "@/models/Doctor";
 import AuditLog from "@/models/AuditLog";
 import bcrypt from "bcryptjs";
-
-
 async function requireAdmin() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
@@ -17,8 +15,6 @@ async function requireAdmin() {
 
   return admin;
 }
-
-
 export async function GET() {
   try {
     await connectDB();
@@ -30,8 +26,6 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }
-
-
 export async function POST(req) {
   try {
     await connectDB();

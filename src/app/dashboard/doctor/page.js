@@ -15,20 +15,16 @@ import {
   Eye
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-
 export default function DoctorDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [schedule, setSchedule] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-
   const [activeAppointment, setActiveAppointment] = useState(null);
   const [diagnosis, setDiagnosis] = useState('');
   const [notes, setNotes] = useState('');
   const [prescription, setPrescription] = useState('');
   const [followUpDate, setFollowUpDate] = useState('');
-
-  
   useEffect(() => {
     if (!user || user.role !== 'doctor') return;
 
@@ -37,37 +33,27 @@ export default function DoctorDashboard() {
       .then(data => setSchedule(data.appointments || []))
       .catch(() => setSchedule([]));
   }, [user]);
-
-
   const todayStr = new Date().toLocaleDateString();
-
   const filteredSchedule = useMemo(() => {
     return schedule.filter(slot => 
       slot.patientName.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [schedule, searchQuery]);
-
   const todayAppointments = useMemo(() => {
     return schedule.filter(slot => new Date(slot.date).toLocaleDateString() === todayStr);
   }, [schedule, todayStr]);
-
   const categories = {
     serving: filteredSchedule.filter(s => s.status === 'serving'),
     upcoming: filteredSchedule.filter(s => s.status === 'booked' || !s.status || s.status === 'Scheduled'),
     completed: filteredSchedule.filter(s => s.status === 'completed')
   };
-
   if (loading) return null;
-
   const doctorName = user?.fullName || user?.name || 'Doctor';
-
-
   async function submitSummary() {
     if (!diagnosis || !notes) {
       alert('Diagnosis and notes are required');
       return;
     }
-
     await fetch(
       `/api/doctor/appointments/${activeAppointment._id}/summary`,
       {
