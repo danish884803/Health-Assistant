@@ -359,15 +359,25 @@ export default function AssistantPage() {
     };
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      if (transcript) {
-        setInput(transcript);
-        setTimeout(() => sendMessage(transcript), 500);
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      if (transcript.trim()) {
+        setInput(transcript.trim());
+        setTimeout(() => sendMessage(transcript.trim()), 500);
       }
     };
 
     recognition.onerror = (event) => {
       console.error("Speech Error:", event.error);
+      if (event.error === 'network') {
+        pushAssistant('Network error: Could not process audio. Please check your internet connection and try again.');
+      } else if (event.error === 'no-speech') {
+        pushAssistant('No speech detected. Please make sure your microphone is working and try again.');
+      } else {
+        pushAssistant(`Error: ${event.error}. Please try again.`);
+      }
       setListening(false);
       isStartedRef.current = false;
     };
@@ -384,14 +394,24 @@ export default function AssistantPage() {
   function toggleListening() {
     if (!recognitionRef.current) return;
     if (isStartedRef.current) {
-      recognitionRef.current.stop();
+      // Let the recognition finish naturally instead of stopping abruptly
+      isStartedRef.current = false;
+      // Give it a moment before stopping
+      setTimeout(() => {
+        recognitionRef.current.stop();
+      }, 100);
     } else {
       try {
         window.speechSynthesis.cancel();
         setInput('');
+        isStartedRef.current = true;
+        setListening(true);
         recognitionRef.current.start();
       } catch (e) {
         recognitionRef.current.stop();
+        isStartedRef.current = false;
+        setListening(false);
+        console.error('Mic error:', e);
       }
     }
   }

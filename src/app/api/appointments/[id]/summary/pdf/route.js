@@ -36,7 +36,6 @@ export async function GET(req, context) {
     ) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
     const fontPath = path.join(
       process.cwd(),
       "public/fonts/Roboto-Regular.ttf"
