@@ -227,17 +227,17 @@ import {
   MapPin,
 } from "lucide-react";
 
-
 const ICONS = {
   department: Heart,
   service: Building2,
   facility: Coffee,
 };
 
-
 function MapContent() {
+
   const [floors, setFloors] = useState([]);
   const [rooms, setRooms] = useState([]);
+
   const [selectedFloor, setSelectedFloor] = useState(null);
   const [selectedRoomId, setSelectedRoomId] = useState(null);
 
@@ -246,11 +246,21 @@ function MapContent() {
 
   const roomParam = searchParams.get("room");
   const from = searchParams.get("from");
-  const backPath = from === "dashboard" ? "/dashboard/patient" : "/";
+
+  const backPath = from === "dashboard"
+    ? "/dashboard/patient"
+    : "/";
+
+  /* =========================
+      LOAD MAP DATA
+  ========================= */
 
   useEffect(() => {
+
     async function loadMapData() {
+
       try {
+
         const res = await fetch("/api/map");
         const data = await res.json();
 
@@ -261,13 +271,13 @@ function MapContent() {
         setRooms(allRooms);
 
         if (roomParam) {
+
           const matchedRoom = allRooms.find(
-            r =>
-              r._id === roomParam ||        
-              r.roomCode === roomParam      
+            r => r._id === roomParam || r.roomCode === roomParam
           );
 
           if (matchedRoom) {
+
             const floorId =
               typeof matchedRoom.floorId === "object"
                 ? matchedRoom.floorId._id
@@ -275,51 +285,70 @@ function MapContent() {
 
             setSelectedFloor(floorId);
             setSelectedRoomId(matchedRoom._id);
+
             return;
           }
         }
 
-        if (allFloors.length > 0) {
+        if (allFloors.length > 0)
           setSelectedFloor(allFloors[0]._id);
-        }
+
       } catch (err) {
+
         console.error("Failed to load map data:", err);
+
       }
     }
 
     loadMapData();
+
   }, [roomParam]);
 
-  const currentFloor = floors.find(f => f._id === selectedFloor);
+  const currentFloor = floors.find(
+    f => f._id === selectedFloor
+  );
 
   const floorRooms = rooms.filter(r => {
+
     const fId =
-      typeof r.floorId === "object" ? r.floorId._id : r.floorId;
+      typeof r.floorId === "object"
+        ? r.floorId._id
+        : r.floorId;
+
     return fId === selectedFloor;
   });
 
-  const activeRoom = rooms.find(r => r._id === selectedRoomId);
+  const activeRoom = rooms.find(
+    r => r._id === selectedRoomId
+  );
 
-  const getRoomStyle = (type, active) => {
+  function getRoomStyle(type, active) {
+
     if (active)
       return "bg-teal-600 text-white scale-105 shadow-xl z-10";
 
     switch (type) {
+
       case "department":
         return "bg-teal-50 text-teal-700 hover:bg-teal-100";
+
       case "service":
         return "bg-sky-50 text-sky-700 hover:bg-sky-100";
+
       case "facility":
         return "bg-amber-50 text-amber-700 hover:bg-amber-100";
+
       default:
         return "bg-gray-100";
     }
-  };
+  }
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-20">
 
-    
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+
+      {/* BACK BUTTON */}
+
       <button
         onClick={() => router.push(backPath)}
         className="text-sm text-gray-500 hover:text-gray-800 mb-4"
@@ -327,45 +356,59 @@ function MapContent() {
         ← Back to {from === "dashboard" ? "Dashboard" : "Home"}
       </button>
 
-      <h1 className="text-3xl font-bold mb-6">Hospital Map Explorer</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">
+        Hospital Map Explorer
+      </h1>
 
-      
-      <div className="flex gap-3 mb-8 overflow-x-auto">
+      {/* FLOOR SELECTOR */}
+
+      <div className="flex gap-3 mb-8 overflow-x-auto pb-1">
+
         {floors.map(f => (
+
           <button
             key={f._id}
             onClick={() => {
               setSelectedFloor(f._id);
               setSelectedRoomId(null);
             }}
-            className={`px-6 py-2 rounded-full text-sm font-semibold whitespace-nowrap
-              ${
-                selectedFloor === f._id
-                  ? "bg-teal-600 text-white shadow-md"
-                  : "bg-white border border-gray-200 text-gray-600 hover:border-teal-500"
-              }`}
+            className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap
+            ${
+              selectedFloor === f._id
+                ? "bg-teal-600 text-white shadow-md"
+                : "bg-white border border-gray-200 text-gray-600 hover:border-teal-500"
+            }`}
           >
+
             {f.name}
+
           </button>
+
         ))}
+
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_320px] gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
 
         {/* MAP GRID */}
-        <div className="bg-slate-50 rounded-3xl border p-8">
+
+        <div className="bg-slate-50 rounded-3xl border p-4 sm:p-8 overflow-x-auto">
+
           <div
-            className="grid gap-4"
+            className="grid gap-4 min-w-[480px] sm:min-w-full"
             style={{
               gridTemplateColumns: "repeat(4, 1fr)",
               gridTemplateRows: "repeat(2, 140px)",
             }}
           >
+
             {floorRooms.map(room => {
+
               const Icon = ICONS[room.type] || DoorOpen;
               const active = selectedRoomId === room._id;
 
               return (
+
                 <button
                   key={room._id}
                   onClick={() => setSelectedRoomId(room._id)}
@@ -375,26 +418,47 @@ function MapContent() {
                     active
                   )}`}
                 >
-                  <Icon className={active ? "text-white" : ""} size={28} />
+
+                  <Icon
+                    className={active ? "text-white" : ""}
+                    size={26}
+                  />
+
                   <span className="text-xs font-bold uppercase text-center px-2">
                     {room.name}
                   </span>
+
                 </button>
+
               );
             })}
+
           </div>
+
         </div>
 
-        {/* DETAILS */}
+        {/* ROOM DETAILS */}
+
         <div className="bg-white rounded-3xl border p-6">
+
           {!activeRoom ? (
-            <div className="text-center py-20 text-gray-400">
+
+            <div className="text-center py-16 text-gray-400">
+
               <MapPin className="mx-auto mb-4" />
+
               Select a room to view details
+
             </div>
+
           ) : (
+
             <>
-              <h3 className="text-2xl font-bold">{activeRoom.name}</h3>
+
+              <h3 className="text-xl sm:text-2xl font-bold">
+                {activeRoom.name}
+              </h3>
+
               <p className="text-teal-600 mt-1">
                 {currentFloor?.name}
               </p>
@@ -402,28 +466,46 @@ function MapContent() {
               <div className="mt-6 text-sm text-gray-500">
                 Room Code
               </div>
+
               <div className="font-mono font-bold text-lg">
                 {activeRoom.roomCode || "N/A"}
               </div>
 
               <div className="mt-4">
+
                 <span className="inline-block px-3 py-1 rounded-full bg-gray-100 text-xs font-bold capitalize">
                   {activeRoom.type}
                 </span>
+
               </div>
+
             </>
+
           )}
+
         </div>
+
       </div>
+
     </section>
   );
 }
 
-
 export default function HospitalMap() {
+
   return (
-    <Suspense fallback={<div className="p-20 text-center">Loading map…</div>}>
+
+    <Suspense
+      fallback={
+        <div className="p-20 text-center">
+          Loading map…
+        </div>
+      }
+    >
+
       <MapContent />
+
     </Suspense>
+
   );
 }
