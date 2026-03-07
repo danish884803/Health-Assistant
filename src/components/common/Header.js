@@ -1,13 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { LogOut, LayoutDashboard } from 'lucide-react';
+import { LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Header() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   if (loading) return null;
 
@@ -21,10 +23,10 @@ export default function Header() {
   const displayName = user?.fullName || user?.name || 'User';
   const initial = displayName.charAt(0).toUpperCase();
 
-  const dashboardHref = isAdmin 
-    ? '/dashboard/admin' 
-    : isDoctor 
-    ? '/dashboard/doctor' 
+  const dashboardHref = isAdmin
+    ? '/dashboard/admin'
+    : isDoctor
+    ? '/dashboard/doctor'
     : '/dashboard/patient';
 
   async function handleLogout() {
@@ -34,14 +36,14 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white border-b fixed top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
 
-        {/* LEFT — Logo */}
+        {/* LOGO */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-400 flex items-center justify-center text-white font-bold">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-400 flex items-center justify-center text-white font-bold">
             SK
           </div>
-          <div className="leading-tight">
+          <div className="leading-tight hidden sm:block">
             <p className="font-semibold text-gray-900 text-sm">
               Sheikh Khalifa Hospital
             </p>
@@ -49,8 +51,8 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* CENTER — Public & Role-Based Nav */}
-        <nav className="hidden lg:flex items-center gap-10 text-sm font-medium text-gray-600">
+        {/* DESKTOP NAV */}
+        <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-600">
           <Link href="/" className="hover:text-teal-600">Home</Link>
           <Link href="/departments" className="hover:text-teal-600">Departments</Link>
           <Link href="/services" className="hover:text-teal-600">Services</Link>
@@ -73,15 +75,9 @@ export default function Header() {
           )}
         </nav>
 
-        {/* RIGHT — Actions */}
-        <div className="flex items-center gap-3">
+        {/* RIGHT ACTIONS (DESKTOP) */}
+        <div className="hidden lg:flex items-center gap-3">
 
-          {/* Language */}
-          {/* <button className="px-4 py-2 rounded-full border border-teal-500 text-teal-600 text-sm">
-            🌐 العربية
-          </button> */}
-
-          {/* GUEST */}
           {isGuest && (
             <>
               <Link
@@ -99,7 +95,6 @@ export default function Header() {
             </>
           )}
 
-          {/* LOGGED IN */}
           {user && (
             <>
               <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-slate-50 border">
@@ -125,13 +120,57 @@ export default function Header() {
             <Link
               href="/appointments/book"
               className="px-5 py-2 rounded-full text-sm font-medium text-white
-                         bg-gradient-to-r from-teal-500 to-emerald-400"
+              bg-gradient-to-r from-teal-500 to-emerald-400"
             >
               Book Appointment
             </Link>
           )}
         </div>
+
+        {/* MOBILE MENU BUTTON */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="lg:hidden p-2 rounded-lg border"
+        >
+          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
+
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div className="lg:hidden border-t bg-white px-6 py-5 space-y-4 text-sm">
+
+          <Link href="/" className="block">Home</Link>
+          <Link href="/departments" className="block">Departments</Link>
+          <Link href="/services" className="block">Services</Link>
+          <Link href="/map" className="block">Hospital Map</Link>
+
+          {isGuest && <Link href="/contact">Contact</Link>}
+
+          {!isGuest && (
+            <Link href={dashboardHref} className="block font-semibold text-teal-600">
+              Dashboard
+            </Link>
+          )}
+
+          {isGuest && (
+            <>
+              <Link href="/login" className="block">Login</Link>
+              <Link href="/register" className="block">Register</Link>
+            </>
+          )}
+
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="text-red-600 flex items-center gap-2"
+            >
+              <LogOut size={16} />
+              Logout
+            </button>
+          )}
+        </div>
+      )}
     </header>
   );
 }
