@@ -6,12 +6,14 @@ export default function ReportPage() {
 
   const { id } = useParams();
 
+  const pdfUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/api/appointments/${id}/summary/pdf`;
+
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-slate-50 p-4">
 
       <iframe
-        src={`/api/appointments/${id}/summary/pdf`}
-        className="w-full h-[90vh] border rounded-xl"
+        src={`https://docs.google.com/gview?embedded=1&url=${pdfUrl}`}
+        className="w-full h-[95vh] border rounded-xl"
       />
 
     </div>
