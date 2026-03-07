@@ -234,15 +234,16 @@ export default function PatientDashboard() {
                           </button>
 
                           {app.medicalSummary && (
-                            <a
-                              href={`/api/appointments/${app._id}/summary/pdf`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-3 py-2 bg-white border rounded-lg text-sm text-teal-600 font-bold hover:bg-teal-50 transition-colors"
-                            >
-                              <FileText size={16} />
-                              PDF
-                            </a>
+                           <button
+                            onClick={() =>
+                            window.location.href =
+                              `/api/appointments/${app._id}/summary/pdf`
+                          }
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-white border rounded-lg text-sm text-teal-600 font-bold hover:bg-teal-50 transition-colors"
+                        >
+                          <FileText size={16} />
+                          PDF
+                        </button>
                           )}
                         </div>
 
