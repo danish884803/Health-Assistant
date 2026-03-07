@@ -12,7 +12,7 @@ import {
   User,
   PlusCircle,
 } from 'lucide-react';
-
+import { Browser } from "@capacitor/browser";
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { useAuth } from '@/context/AuthContext';
@@ -235,15 +235,15 @@ export default function PatientDashboard() {
 
                           {app.medicalSummary && (
                            <button
-                            onClick={() => {
-                              const url = `/api/appointments/${app._id}/summary/pdf`;
-                              window.open(url, "_system");
-                            }}
-                            className="inline-flex items-center gap-2 px-3 py-2 bg-white border rounded-lg text-sm text-teal-600 font-bold hover:bg-teal-50 transition-colors"
-                          >
-                            <FileText size={16} />
-                            PDF
-                          </button>
+                      onClick={async () => {
+                        const url = `${window.location.origin}/api/appointments/${app._id}/summary/pdf`;
+                        await Browser.open({ url });
+                      }}
+                      className="inline-flex items-center gap-2 px-3 py-2 bg-white border rounded-lg text-sm text-teal-600 font-bold hover:bg-teal-50 transition-colors"
+                    >
+                      <FileText size={16} />
+                      PDF
+                    </button>
                           )}
                         </div>
 
